@@ -99,13 +99,27 @@
 
     // 予約ボタンの処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
-      if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
-        alert(`以下の時間で予約しますか？\n\n${message}`);
-      } else {
-        alert("予約したい時間を選択してください。");
-      }
-    });
+  if (selectedCells.length > 0) {
+    const name = prompt("お名前を入力してください：");
+    if (!name) {
+      alert("名前が入力されていません。予約をキャンセルします。");
+      return;
+    }
+
+    const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
+    const confirmMsg = `以下の時間で予約しますか？\n\n${message}\n\n名前：${name}`;
+    const confirmed = confirm(confirmMsg);
+
+    if (confirmed) {
+      // 今後ここで予約確定処理を追加可能（例：スプレッドシートに書き込む）
+      alert("予約が確定しました！");
+    } else {
+      alert("予約をキャンセルしました。");
+    }
+  } else {
+    alert("予約したい時間を選択してください。");
+  }
+});
   </script>
 </body>
 </html>
