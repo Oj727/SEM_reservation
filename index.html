@@ -25,13 +25,13 @@
   </style>
 </head>
 <body>
-  <h1>スプレッドシートの内容</h1>
+  <h1>スプレッドシートの内容!!</h1>
   <div id="sheetData">Loading...</div>
 
   <button id="reserveBtn" style="margin-top: 20px;">予約</button>
 
   <script>
-    let selected = null; // 現在選択されたセルの情報
+    const selectedCells = []; // 選択されたセル情報を複数保存
 
     fetch("https://script.google.com/macros/s/AKfycbzTUG6zTAJXsaxr8MFZa3vSpUDJKmrfAVoAAnvtTz_COqXVZXC_TjUQe7id8RcKXep_0Q/exec")
       .then(res => res.json())
@@ -49,22 +49,28 @@
               if (cell === "") {
                 const button = document.createElement("button");
                 button.textContent = "○";
+
                 button.addEventListener("click", () => {
-                  // すでに選択されていたら解除
-                  if (selected) {
-                    selected.cell.classList.remove("selected");
-                    selected.button.textContent = "○";
+                  const isSelected = cellElement.classList.toggle("selected");
+
+                  if (isSelected) {
+                    button.textContent = "✓";
+                    selectedCells.push({
+                      date: data[0][colIndex],
+                      time: data[rowIndex][0],
+                      cell: cellElement,
+                      button: button
+                    });
+                  } else {
+                    button.textContent = "○";
+                    // 選択解除時、配列から削除
+                    const index = selectedCells.findIndex(
+                      item => item.cell === cellElement
+                    );
+                    if (index !== -1) selectedCells.splice(index, 1);
                   }
-                  // 新しく選択
-                  button.textContent = "✓";
-                  cellElement.classList.add("selected");
-                  selected = {
-                    date: data[0][colIndex],
-                    time: data[rowIndex][0],
-                    cell: cellElement,
-                    button: button
-                  };
                 });
+
                 cellElement.appendChild(button);
                 cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
               } else if (cell === "×") {
@@ -91,10 +97,11 @@
         document.getElementById("sheetData").textContent = "エラー：" + err;
       });
 
+    // 予約ボタンの処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
-      if (selected) {
-        const message = `${selected.date} ${selected.time} で予約しますか？`;
-        alert(message);
+      if (selectedCells.length > 0) {
+        const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
+        alert(`以下の時間で予約しますか？\n\n${message}`);
       } else {
         alert("予約したい時間を選択してください。");
       }
