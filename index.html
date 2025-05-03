@@ -25,8 +25,7 @@
   </style>
 </head>
 <body>
-  <h1>SEM予約表</h1>
-  <p> SEMをみんなで仲良く利用しましょう⭐️</p>
+  <h1>スプレッドシートの内容!!</h1>
   <div id="sheetData">Loading...</div>
 
   <button id="reserveBtn" style="margin-top: 20px;">予約</button>
@@ -34,7 +33,7 @@
   <script>
     const selectedCells = []; // 選択されたセル情報を複数保存
 
-    fetch("https://script.google.com/macros/s/AKfycbwD6oX15mQoN2SbOqUEZ9HX3ISzMQ3jChoL9sjzvKa7eKvF7ocjry44zaFM1eG7OoWpIQ/exec")
+    fetch("https://script.google.com/macros/s/AKfycbyqSa2MGfMcAIEdVuxR7iXqwM8tfPiZiGzi5F4iaTFW5uVIpQ-LVSMd6Et-jXD4VOgOJg/exec")
       .then(res => res.json())
       .then(data => {
         const table = document.createElement("table");
@@ -60,9 +59,7 @@
                       date: data[0][colIndex],
                       time: data[rowIndex][0],
                       cell: cellElement,
-                      button: button,
-                      row: rowIndex + 1,      // 1始まりの行
-                      col: colIndex + 1       // 1始まりの列
+                      button: button
                     });
                   } else {
                     button.textContent = "○";
@@ -109,8 +106,8 @@
       return;
     }
 
-    const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
-    const confirmMsg = `以下の時間で予約しますか？\n\n${message}\n\n名前：${name}`;
+    const message = selectedCells.map(item => ${item.date} ${item.time}).join('\n');
+    const confirmMsg = 以下の時間で予約しますか？\n\n${message}\n\n名前：${name};
     const confirmed = confirm(confirmMsg);
 
     if (confirmed) {
@@ -122,14 +119,13 @@
   }));
 
   // POSTでGASに送信
-  fetch('https://script.google.com/macros/s/AKfycbx4R56ZY4xn1ajKbeKcOrHdx8I2WeIyRWjF-s-BC0RF6ZActOpaXIpDiAYhRN3wR5g6qg/exec', {
-  method: 'POST',
-  mode: 'cors',  // ★追加
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(payload)
-})
+  fetch('https://script.google.com/macros/s/AKfycbwfI_w5TaH7Gt0zp6O2w7aj3IchH5V7c-aWdHjesxd2UJkN30XqTiV4fSxL7fdxTasBeg/exec', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
   .then(response => response.text())
   .then(responseText => {
     alert("予約が送信されました！");
@@ -137,6 +133,7 @@
   .catch(error => {
     alert("送信に失敗しました：" + error);
   });
+}
     } else {
       alert("予約をキャンセルしました。");
     }
@@ -147,4 +144,7 @@
   </script>
 </body>
 </html>
+
+
+ChatGPT:
 
