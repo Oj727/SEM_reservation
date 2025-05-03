@@ -54,8 +54,8 @@
       cursor: pointer;
       border-radius: 8px;
       border: 1px solid #888;
-      background-color: #228B22;
-      color: #fff;
+      background-color: #228B22; /* ← 濃い緑 */
+      color: #fff; /* ← 白文字 */
     }
 
     .selected {
@@ -69,9 +69,9 @@
 
     table {
       border-collapse: collapse;
-      min-width: 1200px;
-      table-layout: fixed;
+      table-layout: auto;
       width: 100%;
+      min-width: max-content;
     }
 
     th, td {
@@ -81,6 +81,7 @@
       font-size: 15px;
       white-space: nowrap;
       min-width: 100px;
+      word-break: keep-all;
     }
 
     th:first-child,
@@ -94,7 +95,7 @@
     }
 
     th {
-      background-color: #ffffff;
+      background-color: #ffffff; /* ← 1行目の背景を白に変更 */
     }
 
     #reserveBtn {
@@ -287,4 +288,3 @@
   </script>
 </body>
 </html>
-
