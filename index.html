@@ -26,7 +26,7 @@
 </head>
 <body>
   <h1>SEM予約表</h1>
-  <p> SEMをみんなで仲良く利用しましょう！/p>
+  <p> SEMをみんなで仲良く利用しましょう！</p>
   <div id="sheetData">Loading...</div>
 
   <button id="reserveBtn" style="margin-top: 20px;">予約</button>
@@ -120,13 +120,14 @@
   }));
 
   // POSTでGASに送信
-  fetch('https://script.google.com/macros/s/AKfycbz7Ask2qE3SpwkHmZQPprOb67NvDvBweyFSzh5uocVUfvz-YhsqIrK4XBDeXJUAeu4kIA/exec', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
+  fetch('https://script.google.com/macros/s/AKfycbxeCE-G-NLzGXZH83XcHieo7_jZMX2XsXQ1Sva2OGCovaIQCpOOElxG5x9NRyzIWKxS/exec', {
+  method: 'POST',
+  mode: 'cors',  // ★追加
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
+})
   .then(response => response.text())
   .then(responseText => {
     alert("予約が送信されました！");
