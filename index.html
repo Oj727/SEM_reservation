@@ -54,7 +54,8 @@
       cursor: pointer;
       border-radius: 8px;
       border: 1px solid #888;
-      background-color: #e0e0e0;
+      background-color: #228B22; /* ← 濃い緑 */
+      color: #fff; /* ← 白文字 */
     }
 
     .selected {
@@ -68,9 +69,9 @@
 
     table {
       border-collapse: collapse;
-      table-layout: auto; /* ← 修正 */
+      table-layout: auto;
       width: 100%;
-      min-width: max-content; /* ← 追加 */
+      min-width: max-content;
     }
 
     th, td {
@@ -80,7 +81,7 @@
       font-size: 15px;
       white-space: nowrap;
       min-width: 100px;
-      word-break: keep-all; /* ← 追加 */
+      word-break: keep-all;
     }
 
     th:first-child,
@@ -94,7 +95,7 @@
     }
 
     th {
-      background-color: #f0f0f0;
+      background-color: #ffffff; /* ← 1行目の背景を白に変更 */
     }
 
     #reserveBtn {
@@ -127,7 +128,7 @@
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg" alt="SEM画像">
   </div>
 
-  <p>みんなで仲良くSEMを利用しよう!!!!</p>
+  <p>みんなで仲良くSEMを利用しよう!!</p>
   <p>予約したい場所をクリックしてください。</p>
 
   <div class="table-wrapper">
