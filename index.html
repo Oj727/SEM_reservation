@@ -1,36 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SEM予約管理</title>
   <style>
-    table { border-collapse: collapse; }
-    td, th {
-      border: 1px solid #aaa;
-      padding: 6px 10px;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
       text-align: center;
     }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    .image-container {
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+      margin: 0 auto 20px auto;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      min-width: 90%;
+      max-width: 1000px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 15px;
+    }
+
     th {
-      background-color: #f0f0f0;
-      font-weight: bold;
+      background-color: #2c3e50;
+      color: white;
     }
-    button {
-      padding: 4px 8px;
+
+    td:hover {
+      background-color: #f1f1f1;
+    }
+
+    td button {
+      padding: 6px 10px;
       font-size: 14px;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
+
+    td button:hover {
+      background-color: #2980b9;
+    }
+
+    .selected button {
+      background-color: #1abc9c !important;
+    }
+
     .selected {
-      background-color: #99ccff !important; /* 青色 */
+      background-color: #d1f2eb !important;
+    }
+
+    select, input[type="text"] {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+
+    #reserveBtn {
+      margin-top: 40px;
+      padding: 14px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    #reserveBtn:hover {
+      background-color: #1e8449;
+      transform: scale(1.05);
+    }
+
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <h1>SEM予約表</h1>
-  <div style="width:590px; height:300px; overflow:hidden;">
-    <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
-         alt="SEM画像"
-         style="width:100%; height:100%; object-fit: cover; object-position: center;border-radius: 16px;">
+
+  <div class="image-container">
+    <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg" alt="SEM画像" />
   </div>
 
   <p>みんなで仲良くSEMを利用しよう!!</p>
@@ -40,7 +142,7 @@
 
   <div style="margin-top: 30px;">
     <label for="nameSelect"><strong>名前を選択：</strong></label>
-    <select id="nameSelect" style="font-size:16px; padding:6px 10px;">
+    <select id="nameSelect">
       <option value="">-- 選んでください --</option>
       <option value="岩瀬">岩瀬</option>
       <option value="高木">高木</option>
@@ -54,32 +156,20 @@
       <option value="正木">正木</option>
       <option value="その他">その他</option>
     </select>
-    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; font-size:16px; padding:6px 10px; margin-left:10px;" />
+    <input type="text" id="otherName" placeholder="名前を入力" style="display:none;" />
   </div>
 
-  <button id="reserveBtn" style="
-    margin-top: 50px;
-    padding: 16px 32px;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: 0.3s;
-  ">
-    予約
-  </button>
-  <p>予約を削除したい場合は<a href="https://oj727.github.io/delete/">こちら</a></p>
+  <button id="reserveBtn">予約</button>
 
+  <p style="margin-top:20px;">
+    予約を削除したい場合は <a href="https://oj727.github.io/delete/">こちら</a>
+  </p>
 
   <script>
-    const selectedCells = []; // 選択されたセル情報を複数保存
+    const selectedCells = [];
 
     function loadSheet() {
-      selectedCells.length = 0; // リセット
+      selectedCells.length = 0;
       document.getElementById("sheetData").textContent = "Loading...";
 
       fetch("https://script.google.com/macros/s/AKfycbzSSJZCS48jhkcpViQz0YmcKPA8sko6utqAHtGuk1uh9zaw-2CVF3qhdb1j-FckMJm2/exec")
@@ -109,8 +199,8 @@
                         time: data[rowIndex][0],
                         cell: cellElement,
                         button: button,
-                        rowIndex: rowIndex,           
-                        colIndex: colIndex  
+                        rowIndex,
+                        colIndex
                       });
                     } else {
                       button.textContent = "○";
@@ -120,13 +210,13 @@
                   });
 
                   cellElement.appendChild(button);
-                  cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+                  cellElement.style.backgroundColor = "#ccffcc";
                 } else if (cell === "×") {
                   cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ddd"; // 灰色
+                  cellElement.style.backgroundColor = "#ddd";
                 } else {
                   cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ffcccc"; // 赤
+                  cellElement.style.backgroundColor = "#ffcccc";
                 }
               } else {
                 cellElement.textContent = cell;
@@ -146,7 +236,6 @@
         });
     }
 
-    // 名前選択肢が「その他」のときに入力欄を表示
     document.getElementById("nameSelect").addEventListener("change", () => {
       const selected = document.getElementById("nameSelect").value;
       const otherInput = document.getElementById("otherName");
@@ -158,59 +247,44 @@
       }
     });
 
-    // 初期読み込み
     window.addEventListener("DOMContentLoaded", loadSheet);
 
-    // 予約ボタン処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
-  let name = document.getElementById("nameSelect").value;
-  if (name === "その他") {
-    name = document.getElementById("otherName").value.trim();
-  }
+      let name = document.getElementById("nameSelect").value;
+      if (name === "その他") {
+        name = document.getElementById("otherName").value.trim();
+      }
 
-  if (!name) {
-    alert("名前が入力されていません。名前を選択または入力してください。");
-    return;
-  }
+      if (!name) {
+        alert("名前が入力されていません。名前を選択または入力してください。");
+        return;
+      }
 
-  if (selectedCells.length > 0) {
-    const message = selectedCells.map(item => {
-      return `${item.date} ${item.time}`;
-    }).join('\n');
+      if (selectedCells.length > 0) {
+        const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
 
-    // 名前も含めた予約確認メッセージ
-    if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}\n\n※予約時間は表示されている時間から30min\n※更新して正しく予約できてるか確認してください。`)) {
-      selectedCells.forEach(item => {
-        sendData(name, item.rowIndex, item.colIndex);
-      });
+        if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}\n\n※予約時間は表示されている時間から30min\n※更新して正しく予約できてるか確認してください。`)) {
+          selectedCells.forEach(item => {
+            sendData(name, item.rowIndex, item.colIndex);
+          });
 
-      alert("予約が完了しました。");
-
-      // 🔄 表を再読み込みして更新を反映
-      loadSheet();
-    }
-  } else {
-    alert("予約したい時間を選択してください。");
-  }
-});
-
+          alert("予約が完了しました。");
+          loadSheet();
+        }
+      } else {
+        alert("予約したい時間を選択してください。");
+      }
+    });
 
     function sendData(inputText, row, col) {
-      var url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
+      const url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
 
       fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'inputText=' + encodeURIComponent(inputText) + 
-              '&row=' + encodeURIComponent(row) + 
-              '&col=' + encodeURIComponent(col)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `inputText=${encodeURIComponent(inputText)}&row=${encodeURIComponent(row)}&col=${encodeURIComponent(col)}`
       })
       .then(response => response.text())
-      .then(data => {
-        // 成功時の処理はここでもできる
-      })
       .catch(error => {
         alert('エラーが発生しました: ' + error);
       });
