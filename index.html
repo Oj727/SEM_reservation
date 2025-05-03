@@ -22,7 +22,7 @@
   </style>
 </head>
 <body>
-  <h1>スプレッドシートの内容!!!!</h1>
+  <h1>スプレッドシートの内容!!</h1>
   <div id="sheetData">Loading...</div>
 
   <script>
@@ -44,10 +44,10 @@
                 button.textContent = "○";
                 button.addEventListener("click", () => {
                   button.textContent = "✓";
-                  alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
+                  cellElement.style.backgroundColor = "#99ccff"; // チェック後は青色
                 });
                 cellElement.appendChild(button);
-                cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+                cellElement.style.backgroundColor = "#ccffcc"; // 初期は黄緑
               } else if (cell === "×") {
                 cellElement.textContent = cell;
                 cellElement.style.backgroundColor = "#ddd"; // 灰色
@@ -74,3 +74,4 @@
   </script>
 </body>
 </html>
+
