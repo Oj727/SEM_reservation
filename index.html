@@ -24,7 +24,7 @@
 
 </head>
 <body>
-  <h1>スプレッドシートの内容 !!!!（A1:U8）</h1>
+  <h1>スプレッドシートの内容</h1>
   <div id="sheetData">Loading...</div>
 
 <script>
@@ -39,7 +39,23 @@
         row.forEach((cell, colIndex) => {
           const isHeader = rowIndex === 0 || colIndex === 0;
           const cellElement = document.createElement(isHeader ? "th" : "td");
+          // 日付や時間の形式を調整
+          if (cell instanceof String && cell.includes('/')) {
+            // "MM/dd"の形式に変換
+            cell = cell;
+          } else if (cell instanceof String && cell.includes(':')) {
+            // "HH:mm"の形式に変換
+            const [hours, minutes] = cell.split(":");
+            cell = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+          } else if (cell instanceof Date) {
+            // Date型の日付を「MM/dd」に変換
+            const date = new Date(cell);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            cell = `${month}/${day}`;
+          }
 
+          
           if (!isHeader) {
             if (cell === "") {
               // ○ボタン + 黄緑背景
