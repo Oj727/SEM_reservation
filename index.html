@@ -26,7 +26,7 @@
 </head>
 <body>
   <h1>予約表</h1>
-  <p>仲良くSEMを使いましょう</p>
+  <p>仲良くSEMを使いましょう!</p>
   <div id="sheetData">Loading...</div>
 
   <button id="reserveBtn" style="margin-top: 20px;">予約</button>
@@ -111,7 +111,7 @@
       const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
       const confirmMsg = `以下の時間で予約しますか？\n\n${message}\n\n名前：${name}`;
       const confirmed = confirm(confirmMsg);
-
+/*
       if (confirmed) {
         // GASに送信するデータを構築
         const payload = selectedCells.map(item => ({
@@ -141,4 +141,5 @@
     } else {
       alert("予約したい時間を選択してください。");
     }
+    */
   });
