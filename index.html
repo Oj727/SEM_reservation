@@ -3,40 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <title>スプレッドシートの表示</title>
+
   <style>
-    table { border-collapse: collapse; }
-    td, th { border: 1px solid #aaa; padding: 4px; }
-  </style>
+  table { border-collapse: collapse; }
+  td, th {
+    border: 1px solid #aaa;
+    padding: 6px 10px;
+    text-align: center;
+  }
+  th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  button {
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+</style>
+
 </head>
 <body>
   <h1>スプレッドシートの内容（A1:U8）</h1>
   <div id="sheetData">Loading...</div>
 
-  <script>
+<script>
   fetch("https://script.google.com/macros/s/AKfycbwBo4J-AWIyT9P8m6fvMQkWin-TTZ5uGZZOufarSmKll3QQuAJF4_uGda7LTwAEB7mQ4g/exec")
     .then(res => res.json())
     .then(data => {
       const table = document.createElement("table");
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        row.forEach(cell => {
-          const td = document.createElement("td");
 
-          if (cell === "") {
+      data.forEach((row, rowIndex) => {
+        const tr = document.createElement("tr");
+
+        row.forEach((cell, colIndex) => {
+          // 最初の行 or 最初の列 → ヘッダー（<th>）にする
+          const isHeader = rowIndex === 0 || colIndex === 0;
+          const cellElement = document.createElement(isHeader ? "th" : "td");
+
+          if (!isHeader && cell === "") {
             const button = document.createElement("button");
             button.textContent = "○";
             button.addEventListener("click", () => {
-              alert("ここに予約フォームを表示できます！");
+              alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
             });
-            td.appendChild(button);
+            cellElement.appendChild(button);
           } else {
-            td.textContent = cell;
+            cellElement.textContent = cell;
           }
 
-          tr.appendChild(td);
+          tr.appendChild(cellElement);
         });
+
         table.appendChild(tr);
       });
+
       document.getElementById("sheetData").innerHTML = "";
       document.getElementById("sheetData").appendChild(table);
     })
@@ -44,5 +65,6 @@
       document.getElementById("sheetData").textContent = "エラー：" + err;
     });
 </script>
+
 </body>
 </html>
