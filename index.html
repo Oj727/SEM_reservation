@@ -1,125 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>予約スケジュール</title>
+  <title>スプレッドシート表示</title>
   <style>
     table { border-collapse: collapse; }
-    td, th { border: 1px solid #aaa; padding: 6px 10px; text-align: center; cursor: default; }
-    th { background-color: #f0f0f0; }
-
-    .clickable {
-      cursor: pointer;
-      color: green;
-      font-weight: bold;
-    }
-
-    /* モーダル用 */
-    #modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    #modalContent {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-    }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: center; }
+    th { background: #eee; }
   </style>
 </head>
 <body>
-  <h1>予約スケジュール（クリック予約）</h1>
-  <div id="sheetData">Loading...</div>
-
-  <!-- モーダル -->
-  <div id="modal">
-    <div id="modalContent">
-      <p id="selectedSlot"></p>
-      <input type="text" id="nameInput" placeholder="名前を入力"><br><br>
-      <label>終了時間:
-        <select id="endTimeSelect">
-          <option>10:00</option>
-          <option>11:00</option>
-          <option>12:00</option>
-        </select>
-      </label><br><br>
-      <button onclick="submitReservation()">予約</button>
-      <button onclick="closeModal()">キャンセル</button>
-    </div>
-  </div>
+  <h2>スケジュール表</h2>
+  <div id="sheetData">読み込み中...</div>
 
   <script>
-    let selectedDate = "";
-    let selectedTime = "";
-    let selectedCell = null;
+    const url = "https://script.google.com/macros/s/AKfycbzr6I0IwYuaDTdHUgLFJREdOHjm-4FrZKbwb-ESK9c40EjwoNpHhmVVG2Dy1MnPvvuENQ/exec";
 
-    fetch("https://script.google.com/macros/s/AKfycbzMb7SAXiZNwh9yIqcrBUC9l6FPAmoJ6dpc3CNgglzTxYpXzrGrYchqbTizjdu92OFo9w/exec") // ← あなたのGAS URL
+    fetch(url)
       .then(res => res.json())
       .then(data => {
-        const transposed = data[0].map((_, colIndex) =>
-          data.map(row => row[colIndex])
+        const raw = data[0]; // スプレッドシートの2次元配列
+        const transposed = raw[0].map((_, colIndex) =>
+          raw.map(row => row[colIndex])
         );
 
         const table = document.createElement("table");
 
-        transposed.forEach((row, i) => {
+        transposed.forEach(row => {
           const tr = document.createElement("tr");
-          row.forEach((cell, j) => {
-            const cellElem = (i === 0 || j === 0) ? document.createElement("th") : document.createElement("td");
-            cellElem.textContent = cell;
-
-            if (cell === "⚪︎") {
-              cellElem.classList.add("clickable");
-              cellElem.addEventListener("click", () => {
-                selectedDate = transposed[0][j];
-                selectedTime = transposed[i][0];
-                selectedCell = cellElem;
-
-                document.getElementById("selectedSlot").textContent = `${selectedDate} ${selectedTime} を予約します`;
-                document.getElementById("modal").style.display = "flex";
-              });
-            }
-
-            tr.appendChild(cellElem);
+          row.forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell;
+            tr.appendChild(td);
           });
           table.appendChild(tr);
         });
 
         document.getElementById("sheetData").innerHTML = "";
         document.getElementById("sheetData").appendChild(table);
+      })
+      .catch(err => {
+        document.getElementById("sheetData").textContent = "読み込みエラー: " + err;
       });
-
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-    }
-
-    function submitReservation() {
-      const name = document.getElementById("nameInput").value;
-      const endtime = document.getElementById("endTimeSelect").value;
-      if (!name) return alert("名前を入力してください");
-
-      // 表示を即座に反映
-      selectedCell.textContent = name;
-      selectedCell.classList.remove("clickable");
-      closeModal();
-
-      // GASへPOST送信（簡易）
-      fetch("https://script.google.com/macros/s/xxx/exec", {
-        method: "POST",
-        body: JSON.stringify({
-          date: selectedDate,
-          time: selectedTime,
-          name: name,
-          endtime: endtime
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-    }
   </script>
 </body>
 </html>
