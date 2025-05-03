@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>スプレッドシートの表示</title>
+  <style>
+    table { border-collapse: collapse; }
+    td, th { border: 1px solid #aaa; padding: 4px; }
+  </style>
+</head>
+<body>
+  <h1>スプレッドシートの内容（A1:U8）</h1>
+  <div id="sheetData">Loading...</div>
+
+  <script>
+    fetch("https://script.google.com/macros/s/AKfycbyR3TuU2Ujdc0XL7jsZNLF3y0saQJXOEjBrPFPXwYs7SXx4P236oioXAKtvR7ZyvRhB/exec") // ← GASで発行したURLに差し替え
+      .then(res => res.json())
+      .then(data => {
+        const table = document.createElement("table");
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          row.forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
+        document.getElementById("sheetData").innerHTML = "";
+        document.getElementById("sheetData").appendChild(table);
+      })
+      .catch(err => {
+        document.getElementById("sheetData").textContent = "エラー：" + err;
+      });
+  </script>
+</body>
+</html>
