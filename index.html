@@ -1,102 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SEM予約管理</title>
   <style>
-    /* 全体のスタイル */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
       margin: 0;
-      padding: 0;
-      background-color: #f4f4f9;
+      padding: 20px;
+      text-align: center;
+      overflow-x: hidden;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     h1 {
-      text-align: center;
-      margin-top: 20px;
-      color: #333;
+      font-size: 32px;
+      margin-bottom: 20px;
     }
 
-    /* 画像コンテナ */
     .image-container {
-      max-width: 100%;
-      width: 100%;
-      height: 50vh; /* 画面の高さの50%に制限 */
-      overflow: hidden;
-      margin: 0 auto 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
+  max-width: 100%;
+  width: 100%;
+  height: 50vh; /* ←画面の高さの50%に制限 */
+  overflow: hidden;
+  margin: 0 auto 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
     .image-container img {
       width: 100%;
-      height: 100%;
-      object-fit: cover; /* 画像が枠いっぱいに表示される */
-      object-position: center; /* 画像の中心を表示 */
+      height: auto;
+      object-fit: cover;
+      object-position: center;
     }
 
-    /* 表のスタイル */
+    select, input[type="text"] {
+      font-size: 16px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 1px solid #888;
+      background-color: #e0e0e0;
+    }
+
+    .selected {
+      background-color: #99ccff !important;
+    }
+
     .table-wrapper {
       overflow-x: auto;
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
     table {
       border-collapse: collapse;
-      min-width: 800px; /* 最小幅を指定 */
-      width: max-content; /* 内容に合わせて拡大 */
+      min-width: 1200px;
+      table-layout: fixed;
+      width: 100%;
     }
 
-    td, th {
-      border: 1px solid #aaa;
-      padding: 10px 15px;
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px 8px;
       text-align: center;
+      font-size: 15px;
+      white-space: nowrap;
+      min-width: 100px;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      background-color: #ffffff;
+      z-index: 2;
+      min-width: 80px;
+      font-weight: bold;
     }
 
     th {
       background-color: #f0f0f0;
-      font-weight: bold;
     }
 
-    button {
-      padding: 6px 12px;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    .selected {
-      background-color: #99ccff !important; /* 青色 */
-    }
-
-    /* セレクトボックスと入力フォーム */
-    select, input[type="text"] {
-      font-size: 16px;
-      padding: 8px 12px;
-      margin-top: 10px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    input[type="text"] {
-      display: none;
-      margin-left: 10px;
-    }
-
-    /* 予約ボタン */
     #reserveBtn {
-      margin-top: 30px;
+      margin-top: 50px;
       padding: 16px 32px;
       font-size: 20px;
       font-weight: bold;
@@ -105,7 +106,7 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       transition: 0.3s;
     }
 
@@ -113,14 +114,8 @@
       background-color: #45a049;
     }
 
-    /* リンク */
     a {
-      color: #3498db;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
+      color: #0077cc;
     }
   </style>
 </head>
@@ -128,16 +123,17 @@
   <h1>SEM予約表</h1>
 
   <div class="image-container">
-    <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
-         alt="SEM画像">
+    <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg" alt="SEM画像">
   </div>
 
-  <p style="text-align: center;">みんなで仲良くSEMを利用しよう!!</p>
-  <p style="text-align: center;">予約したい場所をクリックしてください。</p>
+  <p>みんなで仲良くSEMを利用しよう!!</p>
+  <p>予約したい場所をクリックしてください。</p>
 
-  <div id="sheetData" style="text-align: center;">Loading...</div>
+  <div class="table-wrapper">
+    <div id="sheetData">Loading...</div>
+  </div>
 
-  <div style="margin-top: 30px; text-align: center;">
+  <div style="margin-top: 30px;">
     <label for="nameSelect"><strong>名前を選択：</strong></label>
     <select id="nameSelect">
       <option value="">-- 選んでください --</option>
@@ -153,22 +149,20 @@
       <option value="正木">正木</option>
       <option value="その他">その他</option>
     </select>
-    <input type="text" id="otherName" placeholder="名前を入力" />
+    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; margin-left:10px;" />
   </div>
 
-  <button id="reserveBtn">
-    予約
-  </button>
-  <p style="text-align: center;">予約を削除したい場合は<a href="https://oj727.github.io/delete/">こちら</a></p>
+  <button id="reserveBtn">予約</button>
+  <p>予約を削除したい場合は <a href="https://oj727.github.io/delete/">こちら</a></p>
 
   <script>
-    const selectedCells = []; // 選択されたセル情報を複数保存
+    const selectedCells = [];
 
     function loadSheet() {
-      selectedCells.length = 0; // リセット
+      selectedCells.length = 0;
       document.getElementById("sheetData").textContent = "Loading...";
 
-      fetch("https://script.google.com/macros/s/AKfycbzSSJZCS48jhkcpViQz0YmcKPA8sko6utqAHtGuk1uh9zaw-2CVF3qhdb1j-FckMJm2/exec")
+      fetch("https://script.google.com/macros/s/AKfycbwr1Fc8MQkOkHVlhfkqUHhb7_wqawyGo_58f0omRJw7GEkSBVrmFei1DTy5SxxiqQc1zA/exec")
         .then(res => res.json())
         .then(data => {
           const table = document.createElement("table");
@@ -195,8 +189,8 @@
                         time: data[rowIndex][0],
                         cell: cellElement,
                         button: button,
-                        rowIndex: rowIndex,           
-                        colIndex: colIndex  
+                        rowIndex: rowIndex,
+                        colIndex: colIndex
                       });
                     } else {
                       button.textContent = "○";
@@ -206,13 +200,13 @@
                   });
 
                   cellElement.appendChild(button);
-                  cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+                  cellElement.style.backgroundColor = "#ccffcc";
                 } else if (cell === "×") {
                   cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ddd"; // 灰色
+                  cellElement.style.backgroundColor = "#ddd";
                 } else {
                   cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ffcccc"; // 赤
+                  cellElement.style.backgroundColor = "#ffcccc";
                 }
               } else {
                 cellElement.textContent = cell;
@@ -224,15 +218,15 @@
             table.appendChild(tr);
           });
 
-          document.getElementById("sheetData").innerHTML = "";
-          document.getElementById("sheetData").appendChild(table);
+          const container = document.getElementById("sheetData");
+          container.innerHTML = "";
+          container.appendChild(table);
         })
         .catch(err => {
           document.getElementById("sheetData").textContent = "エラー：" + err;
         });
     }
 
-    // 名前選択肢が「その他」のときに入力欄を表示
     document.getElementById("nameSelect").addEventListener("change", () => {
       const selected = document.getElementById("nameSelect").value;
       const otherInput = document.getElementById("otherName");
@@ -244,10 +238,8 @@
       }
     });
 
-    // 初期読み込み
     window.addEventListener("DOMContentLoaded", loadSheet);
 
-    // 予約ボタン処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
       let name = document.getElementById("nameSelect").value;
       if (name === "その他") {
@@ -260,19 +252,14 @@
       }
 
       if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => {
-          return `${item.date} ${item.time}`;
-        }).join('\n');
+        const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
 
-        // 名前も含めた予約確認メッセージ
         if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}\n\n※予約時間は表示されている時間から30min\n※更新して正しく予約できてるか確認してください。`)) {
           selectedCells.forEach(item => {
             sendData(name, item.rowIndex, item.colIndex);
           });
 
           alert("予約が完了しました。");
-
-          // 🔄 表を再読み込みして更新を反映
           loadSheet();
         }
       } else {
@@ -281,21 +268,17 @@
     });
 
     function sendData(inputText, row, col) {
-      var url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
+      const url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
 
       fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: 'inputText=' + encodeURIComponent(inputText) + 
-              '&row=' + encodeURIComponent(row) + 
-              '&col=' + encodeURIComponent(col)
+        body: `inputText=${encodeURIComponent(inputText)}&row=${encodeURIComponent(row)}&col=${encodeURIComponent(col)}`
       })
-      .then(response => response.text())
-      .then(data => {
-        // 成功時の処理はここでもできる
-      })
+      .then(res => res.text())
+      .then(() => {})
       .catch(error => {
         alert('エラーが発生しました: ' + error);
       });
