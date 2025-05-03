@@ -24,14 +24,14 @@
     }
 
     .image-container {
-  max-width: 100%;
-  width: 100%;
-  height: 50vh; /* ←画面の高さの50%に制限 */
-  overflow: hidden;
-  margin: 0 auto 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+      max-width: 100%;
+      width: 100%;
+      height: 50vh;
+      overflow: hidden;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
 
     .image-container img {
       width: 100%;
@@ -68,9 +68,9 @@
 
     table {
       border-collapse: collapse;
-      min-width: 1200px;
-      table-layout: fixed;
+      table-layout: auto; /* ← 修正 */
       width: 100%;
+      min-width: max-content; /* ← 追加 */
     }
 
     th, td {
@@ -80,6 +80,7 @@
       font-size: 15px;
       white-space: nowrap;
       min-width: 100px;
+      word-break: keep-all; /* ← 追加 */
     }
 
     th:first-child,
