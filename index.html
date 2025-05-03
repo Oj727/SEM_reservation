@@ -56,7 +56,7 @@
     let selectedTime = "";
     let selectedCell = null;
 
-    fetch("https://script.google.com/macros/s/xxx/exec") // ← あなたのGAS URL
+    fetch("https://script.google.com/macros/s/AKfycbzMb7SAXiZNwh9yIqcrBUC9l6FPAmoJ6dpc3CNgglzTxYpXzrGrYchqbTizjdu92OFo9w/exec") // ← あなたのGAS URL
       .then(res => res.json())
       .then(data => {
         const transposed = data[0].map((_, colIndex) =>
