@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  <h1>SEM予約表</h1>
+  <h1>SEM予約表👍</h1>
   <div style="width:590px; height:300px; overflow:hidden;">
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
          alt="SEM画像"
@@ -136,6 +136,18 @@
         });
     }
 
+    // 名前選択肢が「その他」のときに入力欄を表示
+    document.getElementById("nameSelect").addEventListener("change", () => {
+      const selected = document.getElementById("nameSelect").value;
+      const otherInput = document.getElementById("otherName");
+      if (selected === "その他") {
+        otherInput.style.display = "inline-block";
+      } else {
+        otherInput.style.display = "none";
+        otherInput.value = "";
+      }
+    });
+
     // 初期読み込み
     window.addEventListener("DOMContentLoaded", loadSheet);
 
@@ -147,7 +159,10 @@
         }).join('\n');
 
         if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
-          const name = prompt("名前を入力してください:");
+          let name = document.getElementById("nameSelect").value;
+          if (name === "その他") {
+            name = document.getElementById("otherName").value.trim();
+          }
 
           if (name) {
             selectedCells.forEach(item => {
@@ -190,3 +205,4 @@
   </script>
 </body>
 </html>
+
