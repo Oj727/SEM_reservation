@@ -26,7 +26,7 @@
 </head>
 <body>
   <h1>SEM予約表</h1>
-  <p> SEMをみんなで仲良く利用しましょう</p>
+  <p> SEMをみんなで仲良く利用しましょう⭐️</p>
   <div id="sheetData">Loading...</div>
 
   <button id="reserveBtn" style="margin-top: 20px;">予約</button>
@@ -34,7 +34,7 @@
   <script>
     const selectedCells = []; // 選択されたセル情報を複数保存
 
-    fetch("https://script.google.com/macros/s/AKfycbyqSa2MGfMcAIEdVuxR7iXqwM8tfPiZiGzi5F4iaTFW5uVIpQ-LVSMd6Et-jXD4VOgOJg/exec")
+    fetch("https://script.google.com/macros/s/AKfycbx4R56ZY4xn1ajKbeKcOrHdx8I2WeIyRWjF-s-BC0RF6ZActOpaXIpDiAYhRN3wR5g6qg/exec")
       .then(res => res.json())
       .then(data => {
         const table = document.createElement("table");
@@ -60,7 +60,9 @@
                       date: data[0][colIndex],
                       time: data[rowIndex][0],
                       cell: cellElement,
-                      button: button
+                      button: button,
+                      row: rowIndex + 1,      // 1始まりの行
+                      col: colIndex + 1       // 1始まりの列
                     });
                   } else {
                     button.textContent = "○";
@@ -120,7 +122,7 @@
   }));
 
   // POSTでGASに送信
-  fetch('https://script.google.com/macros/s/AKfycbz8NzLbBU-xkA-JsfvU97Gn1t3KgADvg0dIgIYWXkwrQAly6EyTwwK4xFNSr-XBSz0Lbg/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbx4R56ZY4xn1ajKbeKcOrHdx8I2WeIyRWjF-s-BC0RF6ZActOpaXIpDiAYhRN3wR5g6qg/exec', {
   method: 'POST',
   mode: 'cors',  // ★追加
   headers: {
@@ -145,3 +147,4 @@
   </script>
 </body>
 </html>
+
