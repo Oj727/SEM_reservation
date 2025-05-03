@@ -111,8 +111,29 @@
     const confirmed = confirm(confirmMsg);
 
     if (confirmed) {
-      // 今後ここで予約確定処理を追加可能（例：スプレッドシートに書き込む）
-      alert("予約が確定しました！");
+  // GASに送信するデータを構築
+  const payload = selectedCells.map(item => ({
+    row: item.row,
+    col: item.col,
+    name: name
+  }));
+
+  // POSTでGASに送信
+  fetch('https://script.google.com/macros/s/AKfycbwfI_w5TaH7Gt0zp6O2w7aj3IchH5V7c-aWdHjesxd2UJkN30XqTiV4fSxL7fdxTasBeg/exec', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.text())
+  .then(responseText => {
+    alert("予約が送信されました！");
+  })
+  .catch(error => {
+    alert("送信に失敗しました：" + error);
+  });
+}
     } else {
       alert("予約をキャンセルしました。");
     }
