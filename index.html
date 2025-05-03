@@ -21,7 +21,7 @@
           const tr = document.createElement("tr");
           row.forEach(cell => {
             const td = document.createElement("td");
-            td.textContent = cell;
+            td.textContent = cell === "" ? "○" : cell; // ← 空欄を「○」に変換
             tr.appendChild(td);
           });
           table.appendChild(tr);
