@@ -12,10 +12,10 @@
       margin: 0;
       padding: 20px;
       text-align: center;
+      overflow-x: hidden;
       max-width: 1000px;
       margin-left: auto;
       margin-right: auto;
-      overflow-x: hidden;
     }
 
     h1 {
@@ -67,34 +67,32 @@
 
     table {
       border-collapse: collapse;
-      width: 100%;
-      min-width: 900px;
+      min-width: 1200px;
       table-layout: fixed;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      overflow: hidden;
+      width: 100%;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 10px 16px;
+      padding: 10px 8px;
       text-align: center;
       font-size: 15px;
       white-space: nowrap;
-    }
-
-    th {
-      background-color: #f0f0f0;
-      font-weight: bold;
+      min-width: 100px;
     }
 
     th:first-child,
     td:first-child {
       position: sticky;
       left: 0;
-      background-color: #fff;
+      background-color: #ffffff;
       z-index: 2;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+      min-width: 80px;
+      font-weight: bold;
+    }
+
+    th {
+      background-color: #f0f0f0;
     }
 
     #reserveBtn {
@@ -287,4 +285,3 @@
   </script>
 </body>
 </html>
-
