@@ -177,7 +177,7 @@
     }).join('\n');
 
     // 名前も含めた予約確認メッセージ
-    if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}`)) {
+    if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}\n\n※予約時間は表示されている時間から30min\n※更新して正しく予約できてるか確認してください。`)) {
       selectedCells.forEach(item => {
         sendData(name, item.rowIndex, item.colIndex);
       });
