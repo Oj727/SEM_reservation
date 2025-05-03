@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  <h1>糸井研究室SEM予約表</h1>
+  <h1>糸井研究室SEM予約表!</h1>
   <div style="width:590px; height:300px; overflow:hidden;">
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
          alt="SEM画像"
@@ -137,7 +137,7 @@
           const name = prompt("名前を入力してください:");
           
           if (name) {
-            sendData(name,${item.rowIndex},${item.colIndex})
+            sendData(name,item.rowIndex,item.colIndex)
             alert("予約が完了しました。");
           } else {
             alert("名前が入力されていません。予約がキャンセルされました。");
