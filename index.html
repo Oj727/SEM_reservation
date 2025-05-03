@@ -33,117 +33,112 @@
 
   <script>
     const selectedCells = []; // 選択されたセル情報を複数保存
-
     fetch("https://script.google.com/macros/s/AKfycbyqSa2MGfMcAIEdVuxR7iXqwM8tfPiZiGzi5F4iaTFW5uVIpQ-LVSMd6Et-jXD4VOgOJg/exec")
-      .then(res => res.json())
-      .then(data => {
-        const table = document.createElement("table");
+  .then(res => res.json())
+  .then(data => {
+    const table = document.createElement("table");
 
-        data.forEach((row, rowIndex) => {
-          const tr = document.createElement("tr");
+    data.forEach((row, rowIndex) => {
+      const tr = document.createElement("tr");
 
-          row.forEach((cell, colIndex) => {
-            const isHeader = rowIndex === 0 || colIndex === 0;
-            const cellElement = document.createElement(isHeader ? "th" : "td");
+      row.forEach((cell, colIndex) => {
+        const isHeader = rowIndex === 0 || colIndex === 0;
+        const cellElement = document.createElement(isHeader ? "th" : "td");
 
-            if (!isHeader) {
-              if (cell === "") {
-                const button = document.createElement("button");
-                button.textContent = "○";
+        if (!isHeader) {
+          if (cell === "") {
+            const button = document.createElement("button");
+            button.textContent = "○";
 
-                button.addEventListener("click", () => {
-                  const isSelected = cellElement.classList.toggle("selected");
+            button.addEventListener("click", () => {
+              const isSelected = cellElement.classList.toggle("selected");
 
-                  if (isSelected) {
-                    button.textContent = "✓";
-                    selectedCells.push({
-                      date: data[0][colIndex],
-                      time: data[rowIndex][0],
-                      cell: cellElement,
-                      button: button
-                    });
-                  } else {
-                    button.textContent = "○";
-                    // 選択解除時、配列から削除
-                    const index = selectedCells.findIndex(
-                      item => item.cell === cellElement
-                    );
-                    if (index !== -1) selectedCells.splice(index, 1);
-                  }
+              if (isSelected) {
+                button.textContent = "✓";
+                selectedCells.push({
+                  date: data[0][colIndex],
+                  time: data[rowIndex][0],
+                  cell: cellElement,
+                  button: button,
+                  row: rowIndex,  // row番号を追加
+                  col: colIndex   // col番号を追加
                 });
-
-                cellElement.appendChild(button);
-                cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
-              } else if (cell === "×") {
-                cellElement.textContent = cell;
-                cellElement.style.backgroundColor = "#ddd"; // 灰色
               } else {
-                cellElement.textContent = cell;
-                cellElement.style.backgroundColor = "#ffcccc"; // 赤
+                button.textContent = "○";
+                // 選択解除時、配列から削除
+                const index = selectedCells.findIndex(
+                  item => item.cell === cellElement
+                );
+                if (index !== -1) selectedCells.splice(index, 1);
               }
-            } else {
-              cellElement.textContent = cell;
-            }
+            });
 
-            tr.appendChild(cellElement);
-          });
+            cellElement.appendChild(button);
+            cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+          } else if (cell === "×") {
+            cellElement.textContent = cell;
+            cellElement.style.backgroundColor = "#ddd"; // 灰色
+          } else {
+            cellElement.textContent = cell;
+            cellElement.style.backgroundColor = "#ffcccc"; // 赤
+          }
+        } else {
+          cellElement.textContent = cell;
+        }
 
-          table.appendChild(tr);
-        });
-
-        document.getElementById("sheetData").innerHTML = "";
-        document.getElementById("sheetData").appendChild(table);
-      })
-      .catch(err => {
-        document.getElementById("sheetData").textContent = "エラー：" + err;
+        tr.appendChild(cellElement);
       });
 
-    // 予約ボタンの処理
-    document.getElementById("reserveBtn").addEventListener("click", () => {
-  if (selectedCells.length > 0) {
-    const name = prompt("お名前を入力してください：");
-    if (!name) {
-      alert("名前が入力されていません。予約をキャンセルします。");
-      return;
-    }
+      table.appendChild(tr);
+    });
 
-    const message = selectedCells.map(item => ${item.date} ${item.time}).join('\n');
-    const confirmMsg = 以下の時間で予約しますか？\n\n${message}\n\n名前：${name};
-    const confirmed = confirm(confirmMsg);
-
-    if (confirmed) {
-  // GASに送信するデータを構築
-  const payload = selectedCells.map(item => ({
-    row: item.row,
-    col: item.col,
-    name: name
-  }));
-
-  // POSTでGASに送信
-  fetch('https://script.google.com/macros/s/AKfycbwfI_w5TaH7Gt0zp6O2w7aj3IchH5V7c-aWdHjesxd2UJkN30XqTiV4fSxL7fdxTasBeg/exec', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    document.getElementById("sheetData").innerHTML = "";
+    document.getElementById("sheetData").appendChild(table);
   })
-  .then(response => response.text())
-  .then(responseText => {
-    alert("予約が送信されました！");
-  })
-  .catch(error => {
-    alert("送信に失敗しました：" + error);
+  .catch(err => {
+    document.getElementById("sheetData").textContent = "エラー：" + err;
   });
-}
+
+  // 予約ボタンの処理
+  document.getElementById("reserveBtn").addEventListener("click", () => {
+    if (selectedCells.length > 0) {
+      const name = prompt("お名前を入力してください：");
+      if (!name) {
+        alert("名前が入力されていません。予約をキャンセルします。");
+        return;
+      }
+
+      const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
+      const confirmMsg = `以下の時間で予約しますか？\n\n${message}\n\n名前：${name}`;
+      const confirmed = confirm(confirmMsg);
+
+      if (confirmed) {
+        // GASに送信するデータを構築
+        const payload = selectedCells.map(item => ({
+          row: item.row,  // row番号
+          col: item.col,  // col番号
+          name: name
+        }));
+
+        // POSTでGASに送信
+        fetch('https://script.google.com/macros/s/AKfycbwfI_w5TaH7Gt0zp6O2w7aj3IchH5V7c-aWdHjesxd2UJkN30XqTiV4fSxL7fdxTasBeg/exec', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.text())
+        .then(responseText => {
+          alert("予約が送信されました！");
+        })
+        .catch(error => {
+          alert("送信に失敗しました：" + error);
+        });
+      } else {
+        alert("予約をキャンセルしました。");
+      }
     } else {
-      alert("予約をキャンセルしました。");
+      alert("予約したい時間を選択してください。");
     }
-  } else {
-    alert("予約したい時間を選択してください。");
-  }
-});
-  </script>
-</body>
-</html>
-
-
+  });
