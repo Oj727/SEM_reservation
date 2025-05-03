@@ -13,25 +13,36 @@
   <div id="sheetData">Loading...</div>
 
   <script>
-    fetch("https://script.google.com/macros/s/AKfycbxqPMd73Cvff4jk1-hJn8HZC8wBR1mgLNE0v3gF0CqLaPnBUqTwf5gmagqTi__WFr3XQg/exec") // ← GASで発行したURLに差し替え
-      .then(res => res.json())
-      .then(data => {
-        const table = document.createElement("table");
-        data.forEach(row => {
-          const tr = document.createElement("tr");
-          row.forEach(cell => {
-            const td = document.createElement("td");
-            td.textContent = cell === "" ? "○" : cell; // ← 空欄を「○」に変換
-            tr.appendChild(td);
-          });
-          table.appendChild(tr);
+  fetch("https://script.google.com/macros/s/AKfycbwBo4J-AWIyT9P8m6fvMQkWin-TTZ5uGZZOufarSmKll3QQuAJF4_uGda7LTwAEB7mQ4g/exec")
+    .then(res => res.json())
+    .then(data => {
+      const table = document.createElement("table");
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(cell => {
+          const td = document.createElement("td");
+
+          if (cell === "") {
+            const button = document.createElement("button");
+            button.textContent = "○";
+            button.addEventListener("click", () => {
+              alert("ここに予約フォームを表示できます！");
+            });
+            td.appendChild(button);
+          } else {
+            td.textContent = cell;
+          }
+
+          tr.appendChild(td);
         });
-        document.getElementById("sheetData").innerHTML = "";
-        document.getElementById("sheetData").appendChild(table);
-      })
-      .catch(err => {
-        document.getElementById("sheetData").textContent = "エラー：" + err;
+        table.appendChild(tr);
       });
-  </script>
+      document.getElementById("sheetData").innerHTML = "";
+      document.getElementById("sheetData").appendChild(table);
+    })
+    .catch(err => {
+      document.getElementById("sheetData").textContent = "エラー：" + err;
+    });
+</script>
 </body>
 </html>
