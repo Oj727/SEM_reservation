@@ -143,11 +143,7 @@ document.getElementById("reserveBtn").addEventListener("click", () => {
       const name = prompt("名前を入力してください:");
       
       if (name) {
-        // 入力された名前を各セルの inputText として設定
-        selectedCells.forEach(item => {
-          item.inputText = name;  // ここで名前をセット
-          sendData(item.inputText, item.rowIndex, item.colIndex);  // sendData関数に名前を渡す
-        });
+      
       } else {
         alert("名前が入力されていません。予約がキャンセルされました。");
       }
@@ -157,28 +153,6 @@ document.getElementById("reserveBtn").addEventListener("click", () => {
   }
 });
 
-<script>
-        function sendData(inputText, rowIndex, colIndex) {
-            var url = 'https://script.google.com/macros/s/AKfycbxE0D5rvx8OkvaxInL20vnIKXvbmt3QGl19kNj18ax7xEiEtTQd1jTnrTI6CMVUNn7UrA/exec'; // スクリプトURLをここに貼り付け
 
-            // POSTリクエストを送信
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'inputText=' + encodeURIComponent(inputText) + 
-                      '&row=' + encodeURIComponent(rowIndex) + 
-                      '&col=' + encodeURIComponent(colindex)
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert('送信成功: ' + data);
-            })
-            .catch(error => {
-                alert('エラーが発生しました: ' + error);
-            });
-        }
-    </script>
 </body>
 </html>
