@@ -19,13 +19,20 @@
       font-size: 14px;
       cursor: pointer;
     }
+    .selected {
+      background-color: #99ccff !important; /* 青色 */
+    }
   </style>
 </head>
 <body>
-  <h1>スプレッドシートの内容!!</h1>
+  <h1>スプレッドシートの内容</h1>
   <div id="sheetData">Loading...</div>
 
+  <button id="reserveBtn" style="margin-top: 20px;">予約</button>
+
   <script>
+    let selected = null; // 現在選択されたセルの情報
+
     fetch("https://script.google.com/macros/s/AKfycbzTUG6zTAJXsaxr8MFZa3vSpUDJKmrfAVoAAnvtTz_COqXVZXC_TjUQe7id8RcKXep_0Q/exec")
       .then(res => res.json())
       .then(data => {
@@ -43,11 +50,23 @@
                 const button = document.createElement("button");
                 button.textContent = "○";
                 button.addEventListener("click", () => {
+                  // すでに選択されていたら解除
+                  if (selected) {
+                    selected.cell.classList.remove("selected");
+                    selected.button.textContent = "○";
+                  }
+                  // 新しく選択
                   button.textContent = "✓";
-                  cellElement.style.backgroundColor = "#99ccff"; // チェック後は青色
+                  cellElement.classList.add("selected");
+                  selected = {
+                    date: data[0][colIndex],
+                    time: data[rowIndex][0],
+                    cell: cellElement,
+                    button: button
+                  };
                 });
                 cellElement.appendChild(button);
-                cellElement.style.backgroundColor = "#ccffcc"; // 初期は黄緑
+                cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
               } else if (cell === "×") {
                 cellElement.textContent = cell;
                 cellElement.style.backgroundColor = "#ddd"; // 灰色
@@ -71,7 +90,15 @@
       .catch(err => {
         document.getElementById("sheetData").textContent = "エラー：" + err;
       });
+
+    document.getElementById("reserveBtn").addEventListener("click", () => {
+      if (selected) {
+        const message = `${selected.date} ${selected.time} で予約しますか？`;
+        alert(message);
+      } else {
+        alert("予約したい時間を選択してください。");
+      }
+    });
   </script>
 </body>
 </html>
-
