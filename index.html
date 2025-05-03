@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  <h1>糸井研究室SEM予約表</h1>
+  <h1>SEM予約表</h1>
   <div style="width:590px; height:300px; overflow:hidden;">
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
          alt="SEM画像"
@@ -37,6 +37,17 @@
   <p>予約したい場所をクリックしてください。</p>
 
   <div id="sheetData">Loading...</div>
+
+  <div style="margin-top: 30px;">
+    <label for="nameSelect"><strong>名前を選択：</strong></label>
+    <select id="nameSelect" style="font-size:16px; padding:6px 10px;">
+      <option value="">-- 選んでください --</option>
+      <option value="尾島">尾島</option>
+      <option value="正木">正木</option>
+      <option value="その他">その他</option>
+    </select>
+    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; font-size:16px; padding:6px 10px; margin-left:10px;" />
+  </div>
 
   <button id="reserveBtn" style="
     margin-top: 50px;
