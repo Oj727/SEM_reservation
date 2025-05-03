@@ -43,14 +43,18 @@
           
           if (!isHeader) {
             if (cell === "") {
-              // ○ボタン + 黄緑背景
-              const button = document.createElement("button");
-              button.textContent = "○";
-              button.addEventListener("click", () => {
-                alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
-              });
-              cellElement.appendChild(button);
-              cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+  // ○ボタン + 黄緑背景
+  const button = document.createElement("button");
+  button.textContent = "○";
+  button.addEventListener("click", () => {
+    // ボタンの内容を「✓」に変更
+    button.textContent = "✓";
+    // 必要であれば追加の処理（予約フォーム表示など）
+    alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
+  });
+  cellElement.appendChild(button);
+  cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+}
             } else if (cell === "×") {
               cellElement.textContent = cell;
               cellElement.style.backgroundColor = "#ddd"; // 灰色
