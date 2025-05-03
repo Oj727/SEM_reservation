@@ -137,8 +137,7 @@
           const name = prompt("名前を入力してください:");
           
           if (name) {
-            // 名前が入力された場合に処理を追加する部分
-            // 現時点では送信処理はしない
+            sendData(name,${item.rowIndex},${item.colIndex})
             alert("予約が完了しました。");
           } else {
             alert("名前が入力されていません。予約がキャンセルされました。");
@@ -149,5 +148,30 @@
       }
     });
   </script>
+
+  <script>
+        function sendData(inputText,row,col) {
+            var url = 'https://script.google.com/macros/s/AKfycbxE0D5rvx8OkvaxInL20vnIKXvbmt3QGl19kNj18ax7xEiEtTQd1jTnrTI6CMVUNn7UrA/exec'; // スクリプトURLをここに貼り付け
+
+            // POSTリクエストを送信
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'inputText=' + encodeURIComponent(inputText) + 
+                      '&row=' + encodeURIComponent(row) + 
+                      '&col=' + encodeURIComponent(col)
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert('送信成功: ' + data);
+            })
+            .catch(error => {
+                alert('エラーが発生しました: ' + error);
+            });
+        }
+    </script>
+  
 </body>
 </html>
