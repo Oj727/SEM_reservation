@@ -3,83 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title>スプレッドシートの表示</title>
-
   <style>
-  table { border-collapse: collapse; }
-  td, th {
-    border: 1px solid #aaa;
-    padding: 6px 10px;
-    text-align: center;
-  }
-  th {
-    background-color: #f0f0f0;
-    font-weight: bold;
-  }
-  button {
-    padding: 4px 8px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-</style>
-
+    table { border-collapse: collapse; }
+    td, th {
+      border: 1px solid #aaa;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    button {
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>スプレッドシートの内容!!</h1>
+  <h1>スプレッドシートの内容!!!!</h1>
   <div id="sheetData">Loading...</div>
 
-<script>
-  fetch("https://script.google.com/macros/s/AKfycbzTUG6zTAJXsaxr8MFZa3vSpUDJKmrfAVoAAnvtTz_COqXVZXC_TjUQe7id8RcKXep_0Q/exec")
-    .then(res => res.json())
-    .then(data => {
-      const table = document.createElement("table");
+  <script>
+    fetch("https://script.google.com/macros/s/AKfycbzTUG6zTAJXsaxr8MFZa3vSpUDJKmrfAVoAAnvtTz_COqXVZXC_TjUQe7id8RcKXep_0Q/exec")
+      .then(res => res.json())
+      .then(data => {
+        const table = document.createElement("table");
 
-      data.forEach((row, rowIndex) => {
-        const tr = document.createElement("tr");
+        data.forEach((row, rowIndex) => {
+          const tr = document.createElement("tr");
 
-        row.forEach((cell, colIndex) => {
-          const isHeader = rowIndex === 0 || colIndex === 0;
-          const cellElement = document.createElement(isHeader ? "th" : "td");
+          row.forEach((cell, colIndex) => {
+            const isHeader = rowIndex === 0 || colIndex === 0;
+            const cellElement = document.createElement(isHeader ? "th" : "td");
 
-          
-          if (!isHeader) {
-            if (cell === "") {
-  // ○ボタン + 黄緑背景
-  const button = document.createElement("button");
-  button.textContent = "○";
-  button.addEventListener("click", () => {
-    // ボタンの内容を「✓」に変更
-    button.textContent = "✓";
-    // 必要であれば追加の処理（予約フォーム表示など）
-    alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
-  });
-  cellElement.appendChild(button);
-  cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
-}
-            } else if (cell === "×") {
-              cellElement.textContent = cell;
-              cellElement.style.backgroundColor = "#ddd"; // 灰色
+            if (!isHeader) {
+              if (cell === "") {
+                const button = document.createElement("button");
+                button.textContent = "○";
+                button.addEventListener("click", () => {
+                  button.textContent = "✓";
+                  alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
+                });
+                cellElement.appendChild(button);
+                cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+              } else if (cell === "×") {
+                cellElement.textContent = cell;
+                cellElement.style.backgroundColor = "#ddd"; // 灰色
+              } else {
+                cellElement.textContent = cell;
+                cellElement.style.backgroundColor = "#ffcccc"; // 赤
+              }
             } else {
               cellElement.textContent = cell;
-              cellElement.style.backgroundColor = "#ffcccc"; // 赤
             }
-          } else {
-            cellElement.textContent = cell;
-          }
 
-          tr.appendChild(cellElement);
+            tr.appendChild(cellElement);
+          });
+
+          table.appendChild(tr);
         });
 
-        table.appendChild(tr);
+        document.getElementById("sheetData").innerHTML = "";
+        document.getElementById("sheetData").appendChild(table);
+      })
+      .catch(err => {
+        document.getElementById("sheetData").textContent = "エラー：" + err;
       });
-
-      document.getElementById("sheetData").innerHTML = "";
-      document.getElementById("sheetData").appendChild(table);
-    })
-    .catch(err => {
-      document.getElementById("sheetData").textContent = "エラー：" + err;
-    });
-</script>
-
-
+  </script>
 </body>
 </html>
