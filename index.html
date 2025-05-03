@@ -1,31 +1,23 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>スプレッドシート表示!</title>
+  <title>スプレッドシートの表示</title>
   <style>
     table { border-collapse: collapse; }
-    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: center; }
-    th { background: #eee; }
+    td, th { border: 1px solid #aaa; padding: 4px; }
   </style>
 </head>
 <body>
-  <h2>スケジュール表!</h2>
-  <div id="sheetData">読み込み中...</div>
+  <h1>スプレッドシートの内容（A1:U8）</h1>
+  <div id="sheetData">Loading...</div>
 
   <script>
-    const url = "https://script.google.com/macros/s/AKfycbwXV5rrlSTesZllJ8xShmJdmN1AyssHq6KvMEq562OOaUaLlfECtipm0aabVJ_JVlkt9A/exec"
-    fetch(url)
+    fetch("https://script.google.com/macros/s/AKfycbzdJJzhwZzmdi0sNJIN1xsy4qzdyTEIVHCnY0LV-KYiZ3yqFMyzD1aIiwxnohZ6q5BbCA/exec") // ← GASで発行したURLに差し替え
       .then(res => res.json())
       .then(data => {
-        const raw = data[0]; // スプレッドシートの2次元配列
-        const transposed = raw[0].map((_, colIndex) =>
-          raw.map(row => row[colIndex])
-        );
-
         const table = document.createElement("table");
-
-        transposed.forEach(row => {
+        data.forEach(row => {
           const tr = document.createElement("tr");
           row.forEach(cell => {
             const td = document.createElement("td");
@@ -34,14 +26,12 @@
           });
           table.appendChild(tr);
         });
-
         document.getElementById("sheetData").innerHTML = "";
         document.getElementById("sheetData").appendChild(table);
       })
       .catch(err => {
-        document.getElementById("sheetData").textContent = "読み込みエラー: " + err;
+        document.getElementById("sheetData").textContent = "エラー：" + err;
       });
   </script>
 </body>
 </html>
-
