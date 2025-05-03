@@ -130,6 +130,9 @@
           // 予約のメッセージとして、日時、行番号、列番号を表示
           return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
         }).join('\n');
+
+        let rowIndex = item.rowIndex;
+        let colIndex = item.colIndex;
         
         // 予約確認のポップアップを表示
         if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
@@ -137,7 +140,7 @@
           const name = prompt("名前を入力してください:");
           
           if (name) {
-            sendData(name,item.rowIndex,item.colIndex)
+            sendData(name,rowIndex,colIndex)
             alert("予約が完了しました。");
           } else {
             alert("名前が入力されていません。予約がキャンセルされました。");
