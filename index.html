@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  <h1>糸井研究室SEM予約表</h1>
+  <h1>SEM予約表</h1>
   <div style="width:590px; height:300px; overflow:hidden;">
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
          alt="SEM画像"
@@ -128,12 +128,30 @@
     // 初期読み込み
     window.addEventListener("DOMContentLoaded", loadSheet);
 
+    
+
+
     // 予約ボタン処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
       if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => {
-          return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
-        }).join('\n');
+       const message = selectedCells.map(item => {
+  const startTime = data[item.rowIndex][0]; // 例: "10:00"
+  const [hour, minute] = startTime.split(":").map(Number);
+
+  // 30分加算
+  let endHour = hour;
+  let endMinute = minute + 30;
+  if (endMinute >= 60) {
+    endHour += 1;
+    endMinute -= 60;
+  }
+
+  // フォーマット（ゼロ埋め）
+  const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+
+  return `${item.date} ${startTime}〜${endTime}`;
+}).join('\n');
+
 
         if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
           const name = prompt("名前を入力してください:");
