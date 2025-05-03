@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  <h1>糸井研究室SEM予約表</h1>
+  <h1>糸井研究室SEM予約表👍</h1>
   <div style="width:590px; height:300px; overflow:hidden;">
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
          alt="SEM画像"
@@ -123,33 +123,31 @@
         document.getElementById("sheetData").textContent = "エラー：" + err;
       });
 
-    // 予約ボタンの処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
-      if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => {
-          // 予約のメッセージとして、日時、行番号、列番号を表示
-          return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
-        }).join('\n');
+  if (selectedCells.length > 0) {
+    const message = selectedCells.map(item => {
+      return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
+    }).join('\n');
 
-        let rowIndex = ${item.rowIndex};
-        let colIndex = ${item.colIndex};
-        
-        // 予約確認のポップアップを表示
-        if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
-          // ユーザーに名前を入力させる
-          const name = prompt("名前を入力してください:");
-          
-          if (name) {
-            sendData(name,rowIndex,colIndex)
-            alert("予約が完了しました。");
-          } else {
-            alert("名前が入力されていません。予約がキャンセルされました。");
-          }
-        }
+    // 予約確認のポップアップを表示
+    if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
+      const name = prompt("名前を入力してください:");
+
+      if (name) {
+        // 各セルに対して予約データを送信
+        selectedCells.forEach(item => {
+          sendData(name, item.rowIndex, item.colIndex);
+        });
+        alert("予約が完了しました。");
       } else {
-        alert("予約したい時間を選択してください。");
+        alert("名前が入力されていません。予約がキャンセルされました。");
       }
-    });
+    }
+  } else {
+    alert("予約したい時間を選択してください。");
+  }
+});
+
   </script>
 
   <script>
