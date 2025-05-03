@@ -24,11 +24,12 @@
 
 </head>
 <body>
-  <h1>スプレッドシートの内容 !（A1:U8）</h1>
+  <h1>スプレッドシートの内容 !!（A1:U8）</h1>
   <div id="sheetData">Loading...</div>
 
 <script>
-  fetch("https://script.google.com/macros/s/AKfycbzZrs_FnoAgOzvsTVDNbS1GOptV_E59_pwF8pmIt73Z-ia4AeCewDRhTU3B2ihTPmfOIQ/exec")
+ <script>
+  fetch("https://script.google.com/macros/s/AKfycbwBo4J-AWIyT9P8m6fvMQkWin-TTZ5uGZZOufarSmKll3QQuAJF4_uGda7LTwAEB7mQ4g/exec")
     .then(res => res.json())
     .then(data => {
       const table = document.createElement("table");
@@ -37,17 +38,26 @@
         const tr = document.createElement("tr");
 
         row.forEach((cell, colIndex) => {
-          // 最初の行 or 最初の列 → ヘッダー（<th>）にする
           const isHeader = rowIndex === 0 || colIndex === 0;
           const cellElement = document.createElement(isHeader ? "th" : "td");
 
-          if (!isHeader && cell === "") {
-            const button = document.createElement("button");
-            button.textContent = "○";
-            button.addEventListener("click", () => {
-              alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
-            });
-            cellElement.appendChild(button);
+          if (!isHeader) {
+            if (cell === "") {
+              // ○ボタン + 黄緑背景
+              const button = document.createElement("button");
+              button.textContent = "○";
+              button.addEventListener("click", () => {
+                alert(`予約フォームを表示（${data[0][colIndex]} ${data[rowIndex][0]}）`);
+              });
+              cellElement.appendChild(button);
+              cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
+            } else if (cell === "×") {
+              cellElement.textContent = cell;
+              cellElement.style.backgroundColor = "#ddd"; // 灰色
+            } else {
+              cellElement.textContent = cell;
+              cellElement.style.backgroundColor = "#ffcccc"; // 赤
+            }
           } else {
             cellElement.textContent = cell;
           }
@@ -64,6 +74,8 @@
     .catch(err => {
       document.getElementById("sheetData").textContent = "エラー：" + err;
     });
+</script>
+
 </script>
 
 </body>
