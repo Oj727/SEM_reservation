@@ -153,34 +153,37 @@
 
     // 予約ボタン処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
-      if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => {
-          return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
-        }).join('\n');
+  let name = document.getElementById("nameSelect").value;
+  if (name === "その他") {
+    name = document.getElementById("otherName").value.trim();
+  }
 
-        if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
-          let name = document.getElementById("nameSelect").value;
-          if (name === "その他") {
-            name = document.getElementById("otherName").value.trim();
-          }
+  if (!name) {
+    alert("名前が入力されていません。名前を選択または入力してください。");
+    return;
+  }
 
-          if (name) {
-            selectedCells.forEach(item => {
-              sendData(name, item.rowIndex, item.colIndex);
-            });
+  if (selectedCells.length > 0) {
+    const message = selectedCells.map(item => {
+      return `${item.date} ${item.time}`;
+    }).join('\n');
 
-            alert("予約が完了しました。");
+    // 名前も含めた予約確認メッセージ
+    if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}`)) {
+      selectedCells.forEach(item => {
+        sendData(name, item.rowIndex, item.colIndex);
+      });
 
-            // 🔄 表を再読み込みして更新を反映
-            loadSheet();
-          } else {
-            alert("名前が入力されていません。予約がキャンセルされました。");
-          }
-        }
-      } else {
-        alert("予約したい時間を選択してください。");
-      }
-    });
+      alert("予約が完了しました。");
+
+      // 🔄 表を再読み込みして更新を反映
+      loadSheet();
+    }
+  } else {
+    alert("予約したい時間を選択してください。");
+  }
+});
+
 
     function sendData(inputText, row, col) {
       var url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
