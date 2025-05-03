@@ -130,29 +130,57 @@
         document.getElementById("sheetData").textContent = "エラー：" + err;
       });
 
-    // 予約ボタンの処理
-document.getElementById("reserveBtn").addEventListener("click", () => {
-  if (selectedCells.length > 0) {
-    const message = selectedCells.map(item => {
-      // 予約のメッセージとして、日時、行番号、列番号を表示
-      return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
-    }).join('\n');
-    
-    if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
-      // ユーザーに名前を入力させる
-      const name = prompt("名前を入力してください:");
+    <script>
+  // 予約ボタンの処理
+  document.getElementById("reserveBtn").addEventListener("click", () => {
+    if (selectedCells.length > 0) {
+      const message = selectedCells.map(item => {
+        // 予約のメッセージとして、日時、行番号、列番号を表示
+        return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
+      }).join('\n');
       
-      if (name) {
-      
-      } else {
-        alert("名前が入力されていません。予約がキャンセルされました。");
+      if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
+        // ユーザーに名前を入力させる
+        const name = prompt("名前を入力してください:");
+        
+        if (name) {
+          // 名前を各セルの予約データに追加
+          selectedCells.forEach(item => {
+            item.inputText = name; // 名前をセルに追加
+            sendData(item.inputText, item.rowIndex, item.colIndex); // データを送信
+          });
+        } else {
+          alert("名前が入力されていません。予約がキャンセルされました。");
+        }
       }
+    } else {
+      alert("予約したい時間を選択してください。");
     }
-  } else {
-    alert("予約したい時間を選択してください。");
-  }
-});
+  });
 
+  // sendData関数の修正（例）
+  function sendData(inputText, rowIndex, colIndex) {
+    var url = 'https://script.google.com/macros/s/AKfycbzg22mCrv0wU5Ia2tzrp2W38K5eKE1_LjFp6shOglv9njPNwco2USCq-Tou0cjCbcQlQw/exec'; // スクリプトURLをここに貼り付け
+
+    // POSTリクエストを送信
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'inputText=' + encodeURIComponent(inputText) + 
+            '&row=' + encodeURIComponent(rowIndex) + 
+            '&col=' + encodeURIComponent(colIndex)
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert('送信成功: ' + data);
+    })
+    .catch(error => {
+      alert('エラーが発生しました: ' + error);
+    });
+  }
+</script>
 
 </body>
 </html>
