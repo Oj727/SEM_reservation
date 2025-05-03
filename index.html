@@ -21,12 +21,13 @@
       cursor: pointer;
     }
     .selected {
-      background-color: #99ccff !important; /* 青色 */
+      background-color: #99ccff !important;
     }
   </style>
 </head>
 <body>
-  <h1>SEM予約表👍</h1>
+  <h1>糸井研究室SEM予約表</h1>
+
   <div style="width:590px; height:300px; overflow:hidden;">
     <img src="https://www.em.eng.chiba-u.jp/~itoi/equipment/24.jpg"
          alt="SEM画像"
@@ -38,8 +39,19 @@
 
   <div id="sheetData">Loading...</div>
 
+  <div style="margin-top: 30px;">
+    <label for="nameSelect"><strong>名前を選択：</strong></label>
+    <select id="nameSelect" style="font-size:16px; padding:6px 10px;">
+      <option value="">-- 選んでください --</option>
+      <option value="尾島">尾島</option>
+      <option value="正木">正木</option>
+      <option value="その他">その他</option>
+    </select>
+    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; font-size:16px; padding:6px 10px; margin-left:10px;" />
+  </div>
+
   <button id="reserveBtn" style="
-    margin-top: 50px;
+    margin-top: 30px;
     padding: 16px 32px;
     font-size: 20px;
     font-weight: bold;
@@ -55,98 +67,116 @@
   </button>
 
   <script>
-    const selectedCells = []; // 選択されたセル情報を複数保存
+    const selectedCells = [];
+    let data = [];
 
-    function loadSheet() {
-      selectedCells.length = 0; // リセット
-      document.getElementById("sheetData").textContent = "Loading...";
+    // 名前選択で「その他」が選ばれたら入力欄表示
+    document.getElementById("nameSelect").addEventListener("change", () => {
+      const selected = document.getElementById("nameSelect").value;
+      const otherInput = document.getElementById("otherName");
+      if (selected === "その他") {
+        otherInput.style.display = "inline-block";
+      } else {
+        otherInput.style.display = "none";
+        otherInput.value = "";
+      }
+    });
 
-      fetch("https://script.google.com/macros/s/AKfycbzg22mCrv0wU5Ia2tzrp2W38K5eKE1_LjFp6shOglv9njPNwco2USCq-Tou0cjCbcQlQw/exec")
-        .then(res => res.json())
-        .then(data => {
-          const table = document.createElement("table");
+    // スプレッドシートから予約表を取得して描画
+    fetch("https://script.google.com/macros/s/AKfycbzg22mCrv0wU5Ia2tzrp2W38K5eKE1_LjFp6shOglv9njPNwco2USCq-Tou0cjCbcQlQw/exec")
+      .then(res => res.json())
+      .then(json => {
+        data = json;
+        const table = document.createElement("table");
 
-          data.forEach((row, rowIndex) => {
-            const tr = document.createElement("tr");
+        data.forEach((row, rowIndex) => {
+          const tr = document.createElement("tr");
 
-            row.forEach((cell, colIndex) => {
-              const isHeader = rowIndex === 0 || colIndex === 0;
-              const cellElement = document.createElement(isHeader ? "th" : "td");
+          row.forEach((cell, colIndex) => {
+            const isHeader = rowIndex === 0 || colIndex === 0;
+            const cellElement = document.createElement(isHeader ? "th" : "td");
 
-              if (!isHeader) {
-                if (cell === "") {
-                  const button = document.createElement("button");
-                  button.textContent = "○";
+            if (!isHeader) {
+              if (cell === "") {
+                const button = document.createElement("button");
+                button.textContent = "○";
 
-                  button.addEventListener("click", () => {
-                    const isSelected = cellElement.classList.toggle("selected");
+                button.addEventListener("click", () => {
+                  const isSelected = cellElement.classList.toggle("selected");
 
-                    if (isSelected) {
-                      button.textContent = "✓";
-                      selectedCells.push({
-                        date: data[0][colIndex],
-                        time: data[rowIndex][0],
-                        cell: cellElement,
-                        button: button,
-                        rowIndex: rowIndex,           
-                        colIndex: colIndex  
-                      });
-                    } else {
-                      button.textContent = "○";
-                      const index = selectedCells.findIndex(item => item.cell === cellElement);
-                      if (index !== -1) selectedCells.splice(index, 1);
-                    }
-                  });
+                  if (isSelected) {
+                    button.textContent = "✓";
+                    selectedCells.push({
+                      date: data[0][colIndex],
+                      time: data[rowIndex][0],
+                      cell: cellElement,
+                      button: button,
+                      rowIndex: rowIndex,
+                      colIndex: colIndex
+                    });
+                  } else {
+                    button.textContent = "○";
+                    const index = selectedCells.findIndex(
+                      item => item.cell === cellElement
+                    );
+                    if (index !== -1) selectedCells.splice(index, 1);
+                  }
+                });
 
-                  cellElement.appendChild(button);
-                  cellElement.style.backgroundColor = "#ccffcc"; // 黄緑
-                } else if (cell === "×") {
-                  cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ddd"; // 灰色
-                } else {
-                  cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ffcccc"; // 赤
-                }
+                cellElement.appendChild(button);
+                cellElement.style.backgroundColor = "#ccffcc";
+              } else if (cell === "×") {
+                cellElement.textContent = cell;
+                cellElement.style.backgroundColor = "#ddd";
               } else {
                 cellElement.textContent = cell;
+                cellElement.style.backgroundColor = "#ffcccc";
               }
+            } else {
+              cellElement.textContent = cell;
+            }
 
-              tr.appendChild(cellElement);
-            });
-
-            table.appendChild(tr);
+            tr.appendChild(cellElement);
           });
 
-          document.getElementById("sheetData").innerHTML = "";
-          document.getElementById("sheetData").appendChild(table);
-        })
-        .catch(err => {
-          document.getElementById("sheetData").textContent = "エラー：" + err;
+          table.appendChild(tr);
         });
-    }
 
-    // 初期読み込み
-    window.addEventListener("DOMContentLoaded", loadSheet);
+        document.getElementById("sheetData").innerHTML = "";
+        document.getElementById("sheetData").appendChild(table);
+      })
+      .catch(err => {
+        document.getElementById("sheetData").textContent = "エラー：" + err;
+      });
 
     // 予約ボタン処理
     document.getElementById("reserveBtn").addEventListener("click", () => {
       if (selectedCells.length > 0) {
         const message = selectedCells.map(item => {
-          return `${item.date} ${item.time}`;
+          const startTime = data[item.rowIndex][0];
+          const [hour, minute] = startTime.split(":").map(Number);
+          let endHour = hour;
+          let endMinute = minute + 30;
+          if (endMinute >= 60) {
+            endHour += 1;
+            endMinute -= 60;
+          }
+          const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+          return `${item.date} ${startTime}〜${endTime} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
         }).join('\n');
 
-        if (confirm(`以下の時間で予約しますか？\n\n${message}\n\n※表記されている時間から30min`)) {
-          const name = prompt("名前を入力してください:");
+        if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
+          let name = document.getElementById("nameSelect").value;
+          if (name === "その他") {
+            name = document.getElementById("otherName").value.trim();
+          }
 
           if (name) {
             selectedCells.forEach(item => {
               sendData(name, item.rowIndex, item.colIndex);
             });
-
             alert("予約が完了しました。");
-
-            // 🔄 表を再読み込みして更新を反映
-            loadSheet();
+            location.reload(); // ページを更新
           } else {
             alert("名前が入力されていません。予約がキャンセルされました。");
           }
@@ -156,6 +186,7 @@
       }
     });
 
+    // データ送信
     function sendData(inputText, row, col) {
       var url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
 
@@ -164,13 +195,13 @@
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: 'inputText=' + encodeURIComponent(inputText) + 
-              '&row=' + encodeURIComponent(row) + 
+        body: 'inputText=' + encodeURIComponent(inputText) +
+              '&row=' + encodeURIComponent(row) +
               '&col=' + encodeURIComponent(col)
       })
       .then(response => response.text())
       .then(data => {
-        // 成功時の処理はここでもできる
+        // 成功処理があればここに記述
       })
       .catch(error => {
         alert('エラーが発生しました: ' + error);
