@@ -90,7 +90,9 @@
                       date: data[0][colIndex],
                       time: data[rowIndex][0],
                       cell: cellElement,
-                      button: button
+                      button: button,
+                      rowIndex: rowIndex,           
+                      colIndex: colIndex  
                     });
                   } else {
                     button.textContent = "○";
@@ -129,14 +131,54 @@
       });
 
     // 予約ボタンの処理
-    document.getElementById("reserveBtn").addEventListener("click", () => {
-      if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
-        alert(`以下の時間で予約しますか？\n\n${message}`);
+document.getElementById("reserveBtn").addEventListener("click", () => {
+  if (selectedCells.length > 0) {
+    const message = selectedCells.map(item => {
+      // 予約のメッセージとして、日時、行番号、列番号を表示
+      return `${item.date} ${item.time} (行: ${item.rowIndex}, 列: ${item.colIndex})`;
+    }).join('\n');
+    
+    if (confirm(`以下の時間で予約しますか？\n\n${message}`)) {
+      // ユーザーに名前を入力させる
+      const name = prompt("名前を入力してください:");
+      
+      if (name) {
+        // 入力された名前を各セルの inputText として設定
+        selectedCells.forEach(item => {
+          item.inputText = name;  // ここで名前をセット
+          sendData(item.inputText, item.rowIndex, item.colIndex);  // sendData関数に名前を渡す
+        });
       } else {
-        alert("予約したい時間を選択してください。");
+        alert("名前が入力されていません。予約がキャンセルされました。");
       }
-    });
-  </script>
+    }
+  } else {
+    alert("予約したい時間を選択してください。");
+  }
+});
+
+<script>
+        function sendData(inputText, rowIndex, colIndex) {
+            var url = 'https://script.google.com/macros/s/AKfycbxE0D5rvx8OkvaxInL20vnIKXvbmt3QGl19kNj18ax7xEiEtTQd1jTnrTI6CMVUNn7UrA/exec'; // スクリプトURLをここに貼り付け
+
+            // POSTリクエストを送信
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'inputText=' + encodeURIComponent(inputText) + 
+                      '&row=' + encodeURIComponent(rowIndex) + 
+                      '&col=' + encodeURIComponent(colindex)
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert('送信成功: ' + data);
+            })
+            .catch(error => {
+                alert('エラーが発生しました: ' + error);
+            });
+        }
+    </script>
 </body>
 </html>
