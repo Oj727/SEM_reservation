@@ -142,15 +142,17 @@
 
   <!-- ★変更：予約時間入力を追加 -->
   <div>
-    <label><strong>何時間予約しますか？</strong></label><br>
+    <label><strong>何時間下味をつけますか？</strong></label><br>
     <input type="number" id="hoursInput" min="1" max="12" value="1" style="width:80px;" /> h
   </div>
 
   <button id="reserveBtn">予約</button>
   <p>このサイトに関するお問い合わせは受け付けておりません</p>
+
   
   <script>
-  let selectedStart = null; // ← 最初の1マスだけ保持
+  let selectedStart = null; // 選択した開始セルの情報保持
+
   function loadSheet() {
     selectedStart = null;
     document.getElementById("sheetData").textContent = "Loading...";
@@ -173,15 +175,23 @@
                 button.textContent = "○";
 
                 button.addEventListener("click", () => {
-                  // クリックは1つだけ
+                  // 前に選択していたセルがあれば解除
                   if (selectedStart && selectedStart.cell !== cellElement) {
                     selectedStart.button.textContent = "○";
                     selectedStart.cell.classList.remove("selected");
                   }
 
-                  const isSelected = cellElement.classList.toggle("selected");
+                  // トグル：ただし複数選択は不可（常に1つにする）
+                  const isSelected = !cellElement.classList.contains("selected");
+                  // まず全ての selected を外す（視覚的な競合を防ぐ）
+                  document.querySelectorAll(".selected").forEach(e => e.classList.remove("selected"));
+                  document.querySelectorAll("button").forEach(b => {
+                    if (b !== button && b.textContent === "✓") b.textContent = "○";
+                  });
+
                   if (isSelected) {
                     button.textContent = "✓";
+                    cellElement.classList.add("selected");
                     selectedStart = {
                       date: data[0][colIndex],
                       time: data[rowIndex][0],
@@ -192,6 +202,7 @@
                     };
                   } else {
                     button.textContent = "○";
+                    cellElement.classList.remove("selected");
                     selectedStart = null;
                   }
                 });
@@ -253,12 +264,26 @@
       return;
     }
 
-    // 追加：何時間か？
-    const hours = prompt("何時間予約しますか？（数値）", "1");
-    if (!hours || isNaN(hours) || hours <= 0) {
-      alert("時間数が正しく入力されていません。");
+    // ★ ここがポイント：input#hoursInput の値を使う（prompt は使わない）
+    const hoursEl = document.getElementById("hoursInput");
+    if (!hoursEl) {
+      alert("何時間入力欄が見つかりません。HTMLに #hoursInput を配置してください。");
       return;
     }
+
+    const hoursVal = Number(hoursEl.value);
+    if (!Number.isFinite(hoursVal) || hoursVal <= 0) {
+      alert("有効な時間数を入力してください（1以上の数値）。");
+      return;
+    }
+
+    // 必要であれば上限チェック
+    const MAX_HOURS = 24;
+    if (hoursVal > MAX_HOURS) {
+      if (!confirm(`${hoursVal}時間は長すぎます。${MAX_HOURS}時間で進めますか？`)) return;
+    }
+
+    const hours = Math.min(hoursVal, MAX_HOURS);
 
     const confirmMsg =
       `以下の内容で予約しますか？\n\n` +
@@ -269,13 +294,13 @@
     if (!confirm(confirmMsg)) return;
 
     sendData(name, selectedStart.rowIndex, selectedStart.colIndex, hours);
-    alert("予約しました。更新して確認してください。");
+    alert("予約を送信しました。更新して確認してください。");
     loadSheet();
   });
 
   function sendData(inputText, row, col, hours) {
     const url =
-      "https://script.google.com/macros/s/AKfycbxKL-pIlwVBT05ncY16_8q17_BlhoKvC4LsLD3DfGlGtEiX4gLw3F-2RSdorZO3YqGvPg/exec";
+      "https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec";
 
     fetch(url, {
       method: "POST",
