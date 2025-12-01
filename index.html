@@ -157,7 +157,7 @@
       selectedCells.length = 0;
       document.getElementById("sheetData").textContent = "Loading...";
 
-      fetch("https://script.google.com/macros/s/AKfycbwr1Fc8MQkOkHVlhfkqUHhb7_wqawyGo_58f0omRJw7GEkSBVrmFei1DTy5SxxiqQc1zA/exec")
+      fetch("https://script.google.com/macros/s/AKfycbw4vZYPeZHlEBAC191AX5O4wzITi9Hrln7qnmsDrTl4pqwF6uob93WCtSk7Sto4VnZaRw/exec")
         .then(res => res.json())
         .then(data => {
           const table = document.createElement("table");
