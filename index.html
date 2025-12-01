@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ラーメン二郎神田神保町店予約管理!</title>
+
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -18,103 +19,67 @@
       margin-right: auto;
     }
 
-    h1 {
-      font-size: 32px;
-      margin-bottom: 20px;
-    }
+    h1 { font-size: 32px; margin-bottom: 20px; }
 
     .image-container {
-      width: 100%;
-      height: 50vh;
-      overflow: hidden;
+      width: 100%; height: 50vh; overflow: hidden;
       margin: 0 auto 20px;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center center;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center center;
     }
 
     select, input[type="text"], input[type="number"] {
-      font-size: 16px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      font-size: 16px; padding: 6px 10px;
+      border-radius: 8px; border: 1px solid #ccc;
       margin: 10px 0;
     }
 
     button {
-      padding: 4px 8px;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 8px;
+      padding: 4px 8px; font-size: 18px;
+      cursor: pointer; border-radius: 8px;
       border: 1px solid #888;
-      background-color: #228B22;
-      color: #fff;
+      background-color: #228B22; color: #fff;
     }
 
-    .selected {
-      background-color: #99ccff !important;
-    }
+    .selected { background-color: #99ccff !important; }
 
-    .table-wrapper {
-      overflow-x: auto;
-      margin-top: 30px;
-    }
+    .table-wrapper { overflow-x: auto; margin-top: 30px; }
 
     table {
-      border-collapse: collapse;
-      table-layout: auto;
-      width: 100%;
-      min-width: max-content;
+      border-collapse: collapse; table-layout: auto;
+      width: 100%; min-width: max-content;
     }
 
     th, td {
-      border: 1px solid #ddd;
-      padding: 10px 8px;
-      text-align: center;
-      font-size: 15px;
-      white-space: nowrap;
-      min-width: 100px;
-      word-break: keep-all;
+      border: 1px solid #ddd; padding: 10px 8px;
+      text-align: center; font-size: 15px;
+      white-space: nowrap; min-width: 100px;
     }
 
-    th:first-child,
-    td:first-child {
-      position: sticky;
-      left: 0;
-      background-color: #ffffff;
-      z-index: 2;
-      min-width: 80px;
-      font-weight: bold;
+    th:first-child, td:first-child {
+      position: sticky; left: 0; background-color: #ffffff;
+      z-index: 2; min-width: 80px; font-weight: bold;
     }
-
-    th { background-color: #ffffff; }
 
     #reserveBtn {
       margin-top: 50px;
-      padding: 16px 32px;
-      font-size: 20px;
-      font-weight: bold;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
+      padding: 16px 32px; font-size: 20px; font-weight: bold;
+      background-color: #4CAF50; border: none;
+      border-radius: 12px; cursor: pointer;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       transition: 0.3s;
     }
 
-    #reserveBtn:hover {
-      background-color: #45a049;
-    }
+    #reserveBtn:hover { background-color: #45a049; }
   </style>
 </head>
 <body>
+
   <h1>ラーメン二郎神田神保町店予約表</h1>
 
   <div class="image-container">
@@ -122,7 +87,7 @@
   </div>
 
   <p>ラーメン二郎の予約をIT化しました。</p>
-  <p>予約を開始する日時を選択してください。</p>
+  <p>予約開始の日時を選択してください。</p>
 
   <div class="table-wrapper">
     <div id="sheetData">Loading...</div>
@@ -137,22 +102,26 @@
       <option value="その他">【その他】</option>
     </select>
 
-    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; margin-left:10px;" />
+    <input type="text" id="otherName" placeholder="名前を入力"
+           style="display:none; margin-left:10px;" />
   </div>
 
-  <!-- ★変更：予約時間入力を追加 -->
+  <!-- ★予約時間入力 -->
   <div>
     <label><strong>スープを何時間煮込みますか？</strong></label><br>
-    <input type="number" id="hoursInput" min="1" max="24" value="1" style="width:80px;" /> h
+    <input type="number" id="hoursInput" min="1" max="30"
+           value="1" style="width:80px;" /> h
   </div>
 
   <button id="reserveBtn">予約</button>
   <p>このサイトに関するお問い合わせは受け付けておりません</p>
 
-  
   <script>
-  let selectedStart = null; // 選択した開始セルの情報保持
+  let selectedStart = null;
 
+  // -------------------
+  //  Google Sheets 読み込み
+  // -------------------
   function loadSheet() {
     selectedStart = null;
     document.getElementById("sheetData").textContent = "Loading...";
@@ -175,19 +144,18 @@
                 button.textContent = "○";
 
                 button.addEventListener("click", () => {
-                  // 前に選択していたセルがあれば解除
+                  // 既存選択解除
                   if (selectedStart && selectedStart.cell !== cellElement) {
                     selectedStart.button.textContent = "○";
                     selectedStart.cell.classList.remove("selected");
                   }
 
-                  // トグル：ただし複数選択は不可（常に1つにする）
                   const isSelected = !cellElement.classList.contains("selected");
-                  // まず全ての selected を外す（視覚的な競合を防ぐ）
-                  document.querySelectorAll(".selected").forEach(e => e.classList.remove("selected"));
-                  document.querySelectorAll("button").forEach(b => {
-                    if (b !== button && b.textContent === "✓") b.textContent = "○";
-                  });
+
+                  document.querySelectorAll(".selected")
+                    .forEach(e => e.classList.remove("selected"));
+                  document.querySelectorAll("button")
+                    .forEach(b => { if (b !== button && b.textContent === "✓") b.textContent = "○"; });
 
                   if (isSelected) {
                     button.textContent = "✓";
@@ -237,23 +205,23 @@
 
   window.addEventListener("DOMContentLoaded", loadSheet);
 
-  // 名前「その他」処理
+  // -------------------
+  // 名前「その他」選択
+  // -------------------
   document.getElementById("nameSelect").addEventListener("change", () => {
     const selected = document.getElementById("nameSelect").value;
     const otherInput = document.getElementById("otherName");
-    if (selected === "その他") {
-      otherInput.style.display = "inline-block";
-    } else {
-      otherInput.style.display = "none";
-      otherInput.value = "";
-    }
+    otherInput.style.display = (selected === "その他") ? "inline-block" : "none";
+    if (selected !== "その他") otherInput.value = "";
   });
 
+  // -------------------
+  // 予約ボタン
+  // -------------------
   document.getElementById("reserveBtn").addEventListener("click", () => {
     let name = document.getElementById("nameSelect").value;
-    if (name === "その他") {
-      name = document.getElementById("otherName").value.trim();
-    }
+    if (name === "その他") name = document.getElementById("otherName").value.trim();
+
     if (!name) {
       alert("名前が入力されていません。");
       return;
@@ -264,65 +232,50 @@
       return;
     }
 
-    // ★ ここがポイント：input#hoursInput の値を使う（prompt は使わない）
-    const hoursEl = document.getElementById("hoursInput");
-    if (!hoursEl) {
-      alert("何時間入力欄が見つかりません。HTMLに #hoursInput を配置してください。");
-      return;
-    }
-
-    const hoursVal = Number(hoursEl.value);
+    const hoursVal = Number(document.getElementById("hoursInput").value);
     if (!Number.isFinite(hoursVal) || hoursVal <= 0) {
-      alert("有効な時間数を入力してください（1以上の数値）。");
+      alert("有効な時間数を入力してください。");
       return;
     }
 
-    if (hoursVal > 24) {
-     alert("24時間以上は予約できません。");
-     return;
+    if (hoursVal > 30) {
+      alert("最大30時間までです。");
+      return;
     }
-
-
-    // 必要であれば上限チェック
-    const MAX_HOURS = 24;
-    if (hoursVal > MAX_HOURS) {
-      if (!confirm(`${hoursVal}時間は長すぎます。${MAX_HOURS}時間で進めますか？`)) return;
-    }
-
-    const hours = Math.min(hoursVal, MAX_HOURS);
 
     const confirmMsg =
       `以下の内容で予約しますか？\n\n` +
       `名前：${name}\n` +
       `開始：${selectedStart.date} ${selectedStart.time}\n` +
-      `時間：${hours} 時間\n`;
+      `時間：${hoursVal} 時間\n`;
 
     if (!confirm(confirmMsg)) return;
 
-    sendData(name, selectedStart.rowIndex, selectedStart.colIndex, hours);
+    sendData(name, selectedStart.rowIndex, selectedStart.colIndex, hoursVal);
     alert("予約を送信しました。更新して確認してください。");
     loadSheet();
   });
 
+  // -------------------
+  // GAS へ送信
+  // -------------------
   function sendData(inputText, row, col, hours) {
     const url =
       "https://script.google.com/macros/s/AKfycbw4w-w4xhDk5oCgb0K0U0cRzJnDQ6k_J8Wej6iibgEPRrE-kCAzkNsmuXTSLu9hG9p6Xw/exec";
 
     fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body:
         `inputText=${encodeURIComponent(inputText)}` +
         `&row=${encodeURIComponent(row)}` +
         `&col=${encodeURIComponent(col)}` +
         `&hours=${encodeURIComponent(hours)}`
     })
-      .then(res => res.text())
-      .then(() => {})
-      .catch(error => {
-        alert("エラーが発生しました: " + error);
-      });
+    .catch(error => alert("エラーが発生しました: " + error));
   }
-</script>
+  </script>
+
+</body>
+</html>
+
