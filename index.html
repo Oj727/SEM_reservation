@@ -277,6 +277,12 @@
       return;
     }
 
+    if (hoursVal > 24) {
+     alert("24時間以上は予約できません。");
+     return;
+    }
+
+
     // 必要であれば上限チェック
     const MAX_HOURS = 24;
     if (hoursVal > MAX_HOURS) {
