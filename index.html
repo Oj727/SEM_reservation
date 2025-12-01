@@ -306,7 +306,36 @@
 
   function sendData(inputText, row, col, hours) {
     const url =
-      "https://script.google.com/macros/s/AKfycbxCsWynoZKCC-kR4g1hTOatCcwtMOqG-Ga0W4Eum7SRG7MGpcA-ZOVDP-pyMkoO9O9Yvg/exec";
+      "function doPost(e) {
+  var sheet = SpreadsheetApp
+    .openById('1a_mNOgA-5Y1gY7e4IOaAvYZWv28WPv4or6EkIQ7rPz8')
+    .getSheetByName('表');
+
+  var name = e.parameter.inputText;
+  var row = parseInt(e.parameter.row); // 時間の行
+  var col = parseInt(e.parameter.col); // 日付の列
+  var hours = parseInt(e.parameter.hours) - 1;
+
+  if (isNaN(row) || isNaN(col)) {
+    row = 1;
+    col = 1;
+  }
+  if (isNaN(hours) || hours < 0) {
+    hours = 0;
+  }
+
+  // ★ ここが正解
+  var startRow = row + 1; // 時間の行 → シートの行
+  var startCol = col + 1; // 日付の列 → シートの列
+
+  // ★ 正しく縦に hours 分書き込む（行 + i）
+  for (var i = 0; i <= hours; i++) {
+    sheet.getRange(startRow + i, startCol).setValue(name);
+  }
+
+  return ContentService.createTextOutput('Success');
+}
+";
 
     fetch(url, {
       method: "POST",
