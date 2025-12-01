@@ -1,4 +1,155 @@
-<script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ラーメン二郎神田神保町店予約管理</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      overflow-x: hidden;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .image-container {
+      width: 100%;
+      height: 50vh;
+      overflow: hidden;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    select, input[type="text"], input[type="number"] {
+      font-size: 16px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 4px 8px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 1px solid #888;
+      background-color: #228B22;
+      color: #fff;
+    }
+
+    .selected {
+      background-color: #99ccff !important;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 30px;
+    }
+
+    table {
+      border-collapse: collapse;
+      table-layout: auto;
+      width: 100%;
+      min-width: max-content;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 15px;
+      white-space: nowrap;
+      min-width: 100px;
+      word-break: keep-all;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      background-color: #ffffff;
+      z-index: 2;
+      min-width: 80px;
+      font-weight: bold;
+    }
+
+    th { background-color: #ffffff; }
+
+    #reserveBtn {
+      margin-top: 50px;
+      padding: 16px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+
+    #reserveBtn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>ラーメン二郎神田神保町店予約表</h1>
+
+  <div class="image-container">
+    <img src="https://typing.twi1.me/userdata/105/105738/game/403075-backgroundImage1.jpg?mt=1720803262" alt="画像">
+  </div>
+
+  <p>ラーメン二郎でさえも予約をIT化しました!!!!</p>
+  <p>予約したい日時を選択してください。</p>
+
+  <div class="table-wrapper">
+    <div id="sheetData">Loading...</div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <label for="nameSelect"><strong>名前を選択：</strong></label>
+    <select id="nameSelect">
+      <option value="">-- 選んでください --</option>
+      <option value="二郎">二郎</option>
+      <option value="×">【予約不可にする】</option>
+      <option value="その他">【その他】</option>
+    </select>
+
+    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; margin-left:10px;" />
+  </div>
+
+  <!-- ★変更：予約時間入力を追加 -->
+  <div>
+    <label><strong>何時間予約しますか？</strong></label><br>
+    <input type="number" id="hoursInput" min="1" max="12" value="1" style="width:80px;" /> h
+  </div>
+
+  <button id="reserveBtn">予約</button>
+  <p>このサイトに関するお問い合わせは受け付けておりません</p>
+  
+  <script>
   let selectedStart = null; // ← 最初の1マスだけ保持
   function loadSheet() {
     selectedStart = null;
