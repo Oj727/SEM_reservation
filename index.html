@@ -1,283 +1,146 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ラーメン二郎神田神保町店予約管理</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-      overflow-x: hidden;
-      max-width: 1000px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+<script>
+  let selectedStart = null; // ← 最初の1マスだけ保持
+  function loadSheet() {
+    selectedStart = null;
+    document.getElementById("sheetData").textContent = "Loading...";
 
-    h1 {
-      font-size: 32px;
-      margin-bottom: 20px;
-    }
-    .image-container {
-  width: 100%;
-  height: 50vh;
-  overflow: hidden;
-  margin: 0 auto 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+    fetch("https://script.google.com/macros/s/AKfycbw4vZYPeZHlEBAC191AX5O4wzITi9Hrln7qnmsDrTl4pqwF6uob93WCtSk7Sto4VnZaRw/exec")
+      .then(res => res.json())
+      .then(data => {
+        const table = document.createElement("table");
 
-.image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
+        data.forEach((row, rowIndex) => {
+          const tr = document.createElement("tr");
 
+          row.forEach((cell, colIndex) => {
+            const isHeader = rowIndex === 0 || colIndex === 0;
+            const cellElement = document.createElement(isHeader ? "th" : "td");
 
+            if (!isHeader) {
+              if (cell === "") {
+                const button = document.createElement("button");
+                button.textContent = "○";
 
-    select, input[type="text"] {
-      font-size: 16px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 10px 0;
-    }
+                button.addEventListener("click", () => {
+                  // クリックは1つだけ
+                  if (selectedStart && selectedStart.cell !== cellElement) {
+                    selectedStart.button.textContent = "○";
+                    selectedStart.cell.classList.remove("selected");
+                  }
 
-    button {
-      padding: 4px 8px;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 8px;
-      border: 1px solid #888;
-      background-color: #228B22; /* ← 濃い緑 */
-      color: #fff; /* ← 白文字 */
-    }
+                  const isSelected = cellElement.classList.toggle("selected");
+                  if (isSelected) {
+                    button.textContent = "✓";
+                    selectedStart = {
+                      date: data[0][colIndex],
+                      time: data[rowIndex][0],
+                      cell: cellElement,
+                      button: button,
+                      rowIndex: rowIndex,
+                      colIndex: colIndex
+                    };
+                  } else {
+                    button.textContent = "○";
+                    selectedStart = null;
+                  }
+                });
 
-    .selected {
-      background-color: #99ccff !important;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      margin-top: 30px;
-    }
-
-    table {
-      border-collapse: collapse;
-      table-layout: auto;
-      width: 100%;
-      min-width: max-content;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px 8px;
-      text-align: center;
-      font-size: 15px;
-      white-space: nowrap;
-      min-width: 100px;
-      word-break: keep-all;
-    }
-
-    th:first-child,
-    td:first-child {
-      position: sticky;
-      left: 0;
-      background-color: #ffffff;
-      z-index: 2;
-      min-width: 80px;
-      font-weight: bold;
-    }
-
-    th {
-      background-color: #ffffff; /* ← 1行目の背景を白に変更 */
-    }
-
-    #reserveBtn {
-      margin-top: 50px;
-      padding: 16px 32px;
-      font-size: 20px;
-      font-weight: bold;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      transition: 0.3s;
-    }
-
-    #reserveBtn:hover {
-      background-color: #45a049;
-    }
-
-    a {
-      color: #0077cc;
-    }
-  </style>
-</head>
-<body>
-  <h1>ラーメン二郎神田神保町店予約表</h1>
-
-  <div class="image-container">
-    <img src="https://typing.twi1.me/userdata/105/105738/game/403075-backgroundImage1.jpg?mt=1720803262" alt="画像">
-  </div>
-
-  <p>ラーメン二郎でさえも予約をIT化しました!!!!</p>
-  <p>予約したい日時を選択してください。</p>
-
-  <div class="table-wrapper">
-    <div id="sheetData">Loading...</div>
-  </div>
-
-  <div style="margin-top: 30px;">
-    <label for="nameSelect"><strong>名前を選択：</strong></label>
-    <select id="nameSelect">
-      <option value="">-- 選んでください --</option>
-      <option value="二郎">二郎</option>
-      <option value="×">【予約不可にする】</option>
-      <option value="その他">【その他】</option>
-    </select>
-    <input type="text" id="otherName" placeholder="名前を入力" style="display:none; margin-left:10px;" />
-  </div>
-
-  <button id="reserveBtn">予約</button>
-  <!-- <p>予約を削除したい場合は <a href="https://oj727.github.io/delete/">こちら</a></p> -->
-  <p>このサイトに関するお問い合わせは受け付けておりません</p>
-
-  <script>
-    const selectedCells = [];
-
-    function loadSheet() {
-      selectedCells.length = 0;
-      document.getElementById("sheetData").textContent = "Loading...";
-
-      fetch("https://script.google.com/macros/s/AKfycbw4vZYPeZHlEBAC191AX5O4wzITi9Hrln7qnmsDrTl4pqwF6uob93WCtSk7Sto4VnZaRw/exec")
-        .then(res => res.json())
-        .then(data => {
-          const table = document.createElement("table");
-
-          data.forEach((row, rowIndex) => {
-            const tr = document.createElement("tr");
-
-            row.forEach((cell, colIndex) => {
-              const isHeader = rowIndex === 0 || colIndex === 0;
-              const cellElement = document.createElement(isHeader ? "th" : "td");
-
-              if (!isHeader) {
-                if (cell === "") {
-                  const button = document.createElement("button");
-                  button.textContent = "○";
-
-                  button.addEventListener("click", () => {
-                    const isSelected = cellElement.classList.toggle("selected");
-
-                    if (isSelected) {
-                      button.textContent = "✓";
-                      selectedCells.push({
-                        date: data[0][colIndex],
-                        time: data[rowIndex][0],
-                        cell: cellElement,
-                        button: button,
-                        rowIndex: rowIndex,
-                        colIndex: colIndex
-                      });
-                    } else {
-                      button.textContent = "○";
-                      const index = selectedCells.findIndex(item => item.cell === cellElement);
-                      if (index !== -1) selectedCells.splice(index, 1);
-                    }
-                  });
-
-                  cellElement.appendChild(button);
-                  cellElement.style.backgroundColor = "#ccffcc";
-                } else if (cell === "×") {
-                  cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ddd";
-                } else {
-                  cellElement.textContent = cell;
-                  cellElement.style.backgroundColor = "#ffcccc";
-                }
+                cellElement.appendChild(button);
+                cellElement.style.backgroundColor = "#ccffcc";
+              } else if (cell === "×") {
+                cellElement.textContent = cell;
+                cellElement.style.backgroundColor = "#ddd";
               } else {
                 cellElement.textContent = cell;
+                cellElement.style.backgroundColor = "#ffcccc";
               }
+            } else {
+              cellElement.textContent = cell;
+            }
 
-              tr.appendChild(cellElement);
-            });
-
-            table.appendChild(tr);
+            tr.appendChild(cellElement);
           });
 
-          const container = document.getElementById("sheetData");
-          container.innerHTML = "";
-          container.appendChild(table);
-        })
-        .catch(err => {
-          document.getElementById("sheetData").textContent = "エラー：" + err;
+          table.appendChild(tr);
         });
+
+        const container = document.getElementById("sheetData");
+        container.innerHTML = "";
+        container.appendChild(table);
+      })
+      .catch(err => {
+        document.getElementById("sheetData").textContent = "エラー：" + err;
+      });
+  }
+
+  window.addEventListener("DOMContentLoaded", loadSheet);
+
+  // 名前「その他」処理
+  document.getElementById("nameSelect").addEventListener("change", () => {
+    const selected = document.getElementById("nameSelect").value;
+    const otherInput = document.getElementById("otherName");
+    if (selected === "その他") {
+      otherInput.style.display = "inline-block";
+    } else {
+      otherInput.style.display = "none";
+      otherInput.value = "";
+    }
+  });
+
+  document.getElementById("reserveBtn").addEventListener("click", () => {
+    let name = document.getElementById("nameSelect").value;
+    if (name === "その他") {
+      name = document.getElementById("otherName").value.trim();
+    }
+    if (!name) {
+      alert("名前が入力されていません。");
+      return;
     }
 
-    document.getElementById("nameSelect").addEventListener("change", () => {
-      const selected = document.getElementById("nameSelect").value;
-      const otherInput = document.getElementById("otherName");
-      if (selected === "その他") {
-        otherInput.style.display = "inline-block";
-      } else {
-        otherInput.style.display = "none";
-        otherInput.value = "";
-      }
-    });
+    if (!selectedStart) {
+      alert("開始時間を選択してください。");
+      return;
+    }
 
-    window.addEventListener("DOMContentLoaded", loadSheet);
+    // 追加：何時間か？
+    const hours = prompt("何時間予約しますか？（数値）", "1");
+    if (!hours || isNaN(hours) || hours <= 0) {
+      alert("時間数が正しく入力されていません。");
+      return;
+    }
 
-    document.getElementById("reserveBtn").addEventListener("click", () => {
-      let name = document.getElementById("nameSelect").value;
-      if (name === "その他") {
-        name = document.getElementById("otherName").value.trim();
-      }
+    const confirmMsg =
+      `以下の内容で予約しますか？\n\n` +
+      `名前：${name}\n` +
+      `開始：${selectedStart.date} ${selectedStart.time}\n` +
+      `時間：${hours} 時間\n`;
 
-      if (!name) {
-        alert("名前が入力されていません。名前を選択または入力してください。");
-        return;
-      }
+    if (!confirm(confirmMsg)) return;
 
-      if (selectedCells.length > 0) {
-        const message = selectedCells.map(item => `${item.date} ${item.time}`).join('\n');
+    sendData(name, selectedStart.rowIndex, selectedStart.colIndex, hours);
+    alert("予約しました。更新して確認してください。");
+    loadSheet();
+  });
 
-        if (confirm(`以下の時間で予約しますか？\n\n名前: ${name}\n\n${message}\n\n※予約時間は表示されている時間から30min\n※更新して正しく予約できてるか確認してください。`)) {
-          selectedCells.forEach(item => {
-            sendData(name, item.rowIndex, item.colIndex);
-          });
+  function sendData(inputText, row, col, hours) {
+    const url =
+      "https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec";
 
-          alert("予約が完了しました。");
-          loadSheet();
-        }
-      } else {
-        alert("予約したい時間を選択してください。");
-      }
-    });
-
-    function sendData(inputText, row, col) {
-      const url = 'https://script.google.com/macros/s/AKfycbyp90PE1fdXlCea2I2TcheUXAcEHwFA_yI8o031IMyjRMH2mxrNk-YVVZf889fPXoBvoQ/exec';
-
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `inputText=${encodeURIComponent(inputText)}&row=${encodeURIComponent(row)}&col=${encodeURIComponent(col)}`
-      })
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body:
+        `inputText=${encodeURIComponent(inputText)}` +
+        `&row=${encodeURIComponent(row)}` +
+        `&col=${encodeURIComponent(col)}` +
+        `&hours=${encodeURIComponent(hours)}`
+    })
       .then(res => res.text())
       .then(() => {})
       .catch(error => {
-        alert('エラーが発生しました: ' + error);
+        alert("エラーが発生しました: " + error);
       });
-    }
-  </script>
-</body>
-</html>
+  }
+</script>
