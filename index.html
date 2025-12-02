@@ -86,7 +86,7 @@
     <img src="https://typing.twi1.me/userdata/105/105738/game/403075-backgroundImage1.jpg?mt=1720803262" alt="画像">
   </div>
 
-  <p>ラーメン二郎の予約をIT化しました!!!</p>
+  <p>ラーメン二郎の予約をIT化しました</p>
   <p>予約開始の日時を選択してください。</p>
 
   <div class="table-wrapper">
@@ -267,21 +267,24 @@
   // -------------------
   // GAS へ送信
   // -------------------
-  function sendData(inputText, row, col, hours) {
-    const url =
-      "https://script.google.com/macros/s/AKfycbw4mAb-EFuS723rbUCwtmNY9moPCPvPA2XX6wEI9ygX8rZJpHwH8fqlVF2pQPXfqKiLVw/exec";
+ function sendData(inputText, row, col, hours) {
+  const url =
+    "https://script.google.com/macros/s/AKfycbwponSM3C8koKojGtsaBVZjktjukaNsu5SjftHh22hRQEtCVthMd1R6Wf-ERwl_F7k5vg/exec"; // 
 
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body:
-        `inputText=${encodeURIComponent(inputText)}` +
-        `&row=${encodeURIComponent(row)}` +
-        `&col=${encodeURIComponent(col)}` +
-        `&hours=${encodeURIComponent(hours)}`
-    })
-    .catch(error => alert("エラーが発生しました: " + error));
-  }
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body:
+      `inputText=${encodeURIComponent(inputText)}` +
+      `&row=${encodeURIComponent(row)}` +
+      `&col=${encodeURIComponent(col)}` +
+      `&hours=${encodeURIComponent(hours)}`
+  })
+  .then(response => response.text()) // 成功時のレスポンスを取得
+  .then(text => alert("レスポンス: " + text))
+  .catch(error => alert("エラーが発生しました: " + error));
+}
+
   </script>
 
 </body>
